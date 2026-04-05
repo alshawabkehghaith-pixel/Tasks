@@ -1,11 +1,11 @@
-# ETHICAL AI FRAMEWORK
+# ETHICAL AND RESPONSIBLE AI FRAMEWORK
 ## Qatar Economic Government — AI-Powered Economic Solutions Programme
 
 ---
 
 | | |
 |---|---|
-| **Document Title** | Ethical AI Framework for AI-Powered Economic Solutions |
+| **Document Title** | Ethical and Responsible AI Framework for AI-Powered Economic Solutions |
 | **Prepared For** | Qatar Economic Government |
 | **Prepared By** | [Firm Name] |
 | **Document Version** | 1.0 |
@@ -32,9 +32,15 @@
 4. [Framework Scope and Coverage](#4-framework-scope-and-coverage)
 5. [Framework Elements — The Seven Pillars](#5-framework-elements--the-seven-pillars)
 6. [Accepted Standards and Document References](#6-accepted-standards-and-document-references)
-7. [Trigger Conditions and On-Ground Outcomes](#7-trigger-conditions-and-on-ground-outcomes)
-8. [Assumptions](#8-assumptions)
-9. [Technical Lifecycle — The Ethical AI Cycle](#9-technical-lifecycle--the-ethical-ai-cycle)
+7. [Assumptions](#7-assumptions)
+8. [The Ethical AI Governance Cycle](#8-the-ethical-ai-governance-cycle)
+   - [Phase 1 — Classify AI/ML Model Type](#phase-1--classify-aiml-model-type)
+   - [Phase 2 — Define AI Policy](#phase-2--define-ai-policy)
+   - [Phase 3 — Identify AI Risks](#phase-3--identify-ai-risks)
+   - [Phase 4 — Apply Controls](#phase-4--apply-controls)
+   - [Phase 5 — Monitor Outcomes](#phase-5--monitor-outcomes)
+   - [Phase 6 — Continuously Improve](#phase-6--continuously-improve)
+9. [Trigger Conditions and On-Ground Outcomes](#9-trigger-conditions-and-on-ground-outcomes)
 10. [Roles and Responsibilities](#10-roles-and-responsibilities)
 11. [Framework Artefacts](#11-framework-artefacts)
 
@@ -44,9 +50,13 @@
 
 Qatar's economic government is undertaking a significant programme of AI-enabled transformation, deploying five Proof-of-Concept (POC) AI systems to support economic analysis, sector intelligence, and strategic decision-making. These systems operate on sensitive and classified government data — including economic intelligence documents, sector reports, policy briefs, and restricted datasets — making ethical governance not a peripheral concern but a foundational programme requirement.
 
-This document establishes the Ethical AI Framework that governs how AI systems are designed, built, tested, deployed, operated, and retired within this programme. It defines seven ethical pillars, a gated lifecycle process, clear accountability structures, and concrete technical requirements — with particular attention to the handling, ingestion, processing, and storage of classified and sensitive government documents.
+This document establishes the Ethical and Responsible AI Framework that governs how AI systems are designed, built, tested, deployed, operated, and retired within this programme. It defines seven pillars spanning both ethical and responsible AI dimensions, a six-phase governance cycle, clear accountability structures, and concrete technical requirements — with particular attention to the handling, ingestion, processing, and storage of classified and sensitive government documents.
 
-This framework is intentionally distinct from a risk register or risk management plan. Risk management asks: *what could go wrong and how do we contain it?* Ethical AI governance asks: *what kind of AI actor do we intend to be, and how do we ensure our systems consistently reflect that intent?* The two are complementary. This document addresses the latter.
+**Ethical AI** and **Responsible AI** are related but distinct obligations that this framework addresses together. Ethical AI is concerned with the values and principles that should guide AI — fairness, transparency, privacy, human dignity, and non-maleficence. Responsible AI is concerned with the organisational practices that make those values operational — governance structures, legal compliance, accountability mechanisms, reliability, and stakeholder trust. Neither is sufficient without the other: a system can be technically fair but ungoverned, or well-governed but built on flawed values. This framework requires both.
+
+This framework is intentionally distinct from a risk register or risk management plan. Risk management asks: *what could go wrong and how do we contain it?* Ethical and Responsible AI governance asks: *what kind of AI actor do we intend to be, and how do we ensure our systems consistently reflect that intent?* The two are complementary. This document addresses the latter.
+
+At the operational core of the framework is a six-phase governance cycle: **Classify AI/ML Model Type → Define AI Policy → Identify AI Risks → Apply Controls → Monitor Outcomes → Continuously Improve**. Every AI system in the programme passes through this cycle at inception and re-enters it whenever the system, its data, or its operating context changes materially.
 
 The framework is designed to govern the current five POCs and to serve as a reusable institutional standard for any future AI initiative across the economic government — including those procured from third-party vendors.
 
@@ -66,7 +76,23 @@ This creates a distinct class of ethical obligation that goes beyond standard AI
 
 This framework aligns with Qatar National Vision 2030, which defines four national pillars: Human Development, Social Development, Economic Development, and Environmental Development. AI systems deployed in economic governance directly intersect all four pillars and carry an obligation to accelerate the vision without creating unintended institutional, social, or data sovereignty harm.
 
-### 2.3 What This Framework Is Not
+### 2.3 Ethical AI vs. Responsible AI — How This Framework Addresses Both
+
+These two terms are frequently used interchangeably, but they represent distinct and complementary obligations. This framework is structured to address both explicitly.
+
+| Dimension | Ethical AI | Responsible AI |
+|---|---|---|
+| **Focus** | The values and principles that should guide AI | The governance practices that make those values operational |
+| **Asks** | Is this AI system fair, transparent, and respectful of human dignity? | Is this AI system governed, accountable, compliant, and trustworthy in practice? |
+| **Concerned with** | What the AI does and how it affects people | How the organisation builds, deploys, and oversees the AI |
+| **Failure looks like** | A biased model, an opaque decision, a privacy violation | No governance process, no accountability, no audit trail, no human oversight |
+| **Addressed by** | Pillars 1, 2, 3, and 7 of this framework (Transparency, Fairness, Privacy, Inclusivity) | Pillars 4, 5, and 6 of this framework (Accountability, Robustness, Sustainability) and the six-phase governance cycle |
+
+In the context of this programme, both dimensions are elevated by the fact that the AI systems ingest classified government documents. Ethical AI requires that access to, and derivation from, those documents respects individual and institutional rights. Responsible AI requires that the organisation has the governance structures in place to enforce that — through defined roles, auditable processes, classified document ingestion authorisation, and continuous monitoring.
+
+Neither dimension is optional. A system that is ethically designed but has no governance process to maintain those properties over time will drift. A system that is well-governed but built on biased or opaque foundations will produce harmful outcomes despite its process rigour. This framework requires both, simultaneously, throughout the AI lifecycle.
+
+### 2.4 What This Framework Is Not
 
 This framework is not:
 
@@ -79,25 +105,30 @@ This framework is not:
 
 ## 3. Objectives of the Framework
 
-**OBJ-01 — Institutionalise Ethical AI Governance**
+Each objective is tagged to indicate whether it primarily serves the **Ethical AI** dimension (values and principles), the **Responsible AI** dimension (governance and practice), or **Both**.
+
+**OBJ-01 — Institutionalise AI Governance** `Responsible AI`
 Establish a repeatable, documented governance process that any team within the economic government can apply when initiating, building, or procuring an AI system — regardless of vendor, technology stack, or use case.
 
-**OBJ-02 — Define Accountable Ownership**
+**OBJ-02 — Define Accountable Ownership** `Responsible AI`
 Assign explicit roles and responsibilities across the AI lifecycle so that every decision — from data ingestion to model deployment to decommissioning — has a named accountable owner, and no decision is attributed solely to the AI system.
 
-**OBJ-03 — Protect Classified and Sensitive Government Documents**
+**OBJ-03 — Protect Classified and Sensitive Government Documents** `Both`
 Ensure that AI systems ingesting classified documents operate under strict data sovereignty, access control, and information security requirements. Classified content — including its vector embeddings and indexed representations — must never leave Qatar's authorised infrastructure, and access to AI outputs derived from classified documents must be controlled at least as rigorously as access to the source documents themselves.
 
-**OBJ-04 — Ensure Explainability and Auditability of AI Outputs**
+**OBJ-04 — Ensure Explainability and Auditability of AI Outputs** `Both`
 Mandate that AI outputs used to inform economic decisions — including outputs generated from classified source documents — are explainable to authorised non-technical stakeholders and traceable back to their source inputs. Decision-makers must be able to understand why a recommendation was made and which documents or data points informed it.
 
-**OBJ-05 — Prevent Bias in Economic Analysis and Recommendations**
+**OBJ-05 — Prevent Bias in Economic Analysis and Recommendations** `Ethical AI`
 Establish bias detection and mitigation requirements to prevent AI systems from systematically skewing analysis or recommendations based on imbalances in the training data, document corpus, or retrieval pipeline — including imbalances created by the selective availability of classified documents.
 
-**OBJ-06 — Enable Continuous Ethical Review**
+**OBJ-06 — Uphold Privacy, Dignity, and Data Sovereignty** `Ethical AI`
+Ensure that the use of personal, institutional, and classified data in AI systems respects the rights of individuals and entities, complies with Qatar's legal framework, and does not treat data as a commodity to be freely exploited.
+
+**OBJ-07 — Enable Continuous Ethical and Responsible Review** `Both`
 Build a structured feedback loop where AI systems are reviewed for ethical drift, performance degradation, data sovereignty risks, and changed classification conditions — not only at launch but throughout their operational life.
 
-**OBJ-07 — Provide a Reusable Institutional Standard**
+**OBJ-08 — Provide a Reusable Institutional Standard** `Responsible AI`
 Produce a framework portable enough to govern the five current POCs and extensible enough to apply to future AI systems, including those that ingest different classes of sensitive or classified content.
 
 ---
@@ -179,9 +210,21 @@ The framework covers the responsibilities of every party involved in an AI syste
 
 ## 5. Framework Elements — The Seven Pillars
 
+The seven pillars form the value and governance backbone of the framework. Each pillar is tagged to show its primary dimension. Pillars tagged **Ethical AI** address values and principles. Pillars tagged **Responsible AI** address governance, practice, and accountability. Several pillars serve both.
+
+| Pillar | Primary Dimension |
+|---|---|
+| 1 — Transparency | Both |
+| 2 — Fairness and Non-Discrimination | Ethical AI |
+| 3 — Privacy and Data Sovereignty | Both |
+| 4 — Accountability and Human Oversight | Responsible AI |
+| 5 — Robustness and Security | Responsible AI |
+| 6 — Sustainability and Environmental Responsibility | Responsible AI |
+| 7 — Inclusivity and Cultural Alignment | Ethical AI |
+
 ---
 
-### Pillar 1 — Transparency
+### Pillar 1 — Transparency `Both`
 
 **Principle:** AI systems must make their logic, data sources, and limitations visible to authorised users and decision-makers. When AI outputs are derived from classified documents, the source classification level must be disclosed to the user alongside the output.
 
@@ -203,7 +246,7 @@ The framework covers the responsibilities of every party involved in an AI syste
 
 ---
 
-### Pillar 2 — Fairness and Non-Discrimination
+### Pillar 2 — Fairness and Non-Discrimination `Ethical AI`
 
 **Principle:** AI systems must not produce outputs that systematically favour or disadvantage any economic sector, business entity class, or population segment. Bias can be introduced not only through training data but through the selective availability of classified documents — if certain sectors are better represented in the classified document corpus than others, the AI's outputs will reflect that imbalance.
 
@@ -226,7 +269,7 @@ The framework covers the responsibilities of every party involved in an AI syste
 
 ---
 
-### Pillar 3 — Privacy and Data Sovereignty
+### Pillar 3 — Privacy and Data Sovereignty `Both`
 
 **Principle:** All personal, sensitive, and classified data used by AI systems — including data ingested from government documents — must be handled in compliance with Qatar's legal framework and kept within Qatar's authorised infrastructure. The vector embeddings and indexed representations of classified documents are themselves classified assets and must be governed accordingly.
 
@@ -260,7 +303,7 @@ The framework covers the responsibilities of every party involved in an AI syste
 
 ---
 
-### Pillar 4 — Accountability and Human Oversight
+### Pillar 4 — Accountability and Human Oversight `Responsible AI`
 
 **Principle:** Every AI-assisted decision that affects economic policy, resource allocation, or public-facing outputs must have a human decision-maker who owns the outcome. The AI system provides analysis and recommendation; it does not make decisions. This is especially critical when the AI's analysis is derived from classified documents that the human decision-maker may not have directly read.
 
@@ -285,7 +328,7 @@ The framework covers the responsibilities of every party involved in an AI syste
 
 ---
 
-### Pillar 5 — Robustness and Security
+### Pillar 5 — Robustness and Security `Responsible AI`
 
 **Principle:** AI systems must perform reliably under expected and adversarial conditions. Systems that ingest classified documents face a specific class of threat: adversarial prompts designed to extract classified content from the AI, either directly or through inference. This must be actively defended against.
 
@@ -309,7 +352,7 @@ The framework covers the responsibilities of every party involved in an AI syste
 
 ---
 
-### Pillar 6 — Sustainability and Environmental Responsibility
+### Pillar 6 — Sustainability and Environmental Responsibility `Responsible AI`
 
 **Principle:** AI systems should be designed and operated with awareness of their computational and environmental footprint, consistent with Qatar's sustainability commitments and the efficiency obligations of responsible government technology procurement.
 
@@ -327,7 +370,7 @@ The framework covers the responsibilities of every party involved in an AI syste
 
 ---
 
-### Pillar 7 — Inclusivity and Cultural Alignment
+### Pillar 7 — Inclusivity and Cultural Alignment `Ethical AI`
 
 **Principle:** AI systems serving Qatar's economic government must be designed with awareness of linguistic, cultural, and domain-specific nuances. Outputs must be meaningful and actionable for the local context, and the classified document corpus must be representative of Qatar's full economic landscape — not just the sectors with the most documentation.
 
@@ -369,157 +412,7 @@ The following standards and documents form the normative basis of this framework
 
 ---
 
-## 7. Trigger Conditions and On-Ground Outcomes
-
-### 7.1 When the Framework Activates
-
-The framework uses a **gated lifecycle model**. It does not activate only at deployment — it is triggered at the beginning of any AI initiative and applies at each of seven defined gates. Passing a gate requires completing specified activities and obtaining a documented sign-off before the next phase begins.
-
-The framework is also triggered mid-lifecycle by specific operational events, described in Section 7.3.
-
-### 7.2 The Seven Lifecycle Gates
-
----
-
-#### Gate 0 — Ethics Screening
-*Triggered at: Initiation of any new AI use case*
-
-**Activities:**
-- Complete the AI Use Case Ethics Screening Questionnaire, covering: what data and documents will be used, their classification levels, what decisions the AI will inform, who is affected, whether the use case has legal authority, and whether the task requires classified document ingestion.
-- Classify the use case as Low / Medium / High ethical risk based on the screening answers.
-- High-risk use cases (those involving classified document ingestion, policy-level decisions, or public-facing outputs) trigger a full Ethical Impact Assessment before design begins.
-
-**Output:** Signed Ethics Screening Record. Retained with project documentation.
-
----
-
-#### Gate 1 — Data and Document Ethics Planning
-*Triggered at: Data sources and document corpus identified*
-
-**Activities:**
-- Apply the document classification schema to all documents proposed for ingestion.
-- Confirm legal authority for AI processing of each document class.
-- Map data lineage from source documents to vector store or training pipeline.
-- Identify bias risks in the document corpus (representational gaps, classification-level imbalances).
-- Conduct the privacy-by-design review: confirm that the system architecture routes each classification level to the correct infrastructure and enforces access controls at the retrieval layer.
-
-**Output:** Data Ethics Plan (included in the technical design document). Corpus composition and classification breakdown documented.
-
----
-
-#### Gate 2 — Model Ethics Review
-*Triggered at: Trained model or configured RAG pipeline ready for internal evaluation*
-
-**Activities:**
-- Bias audit on training data or document corpus.
-- Fairness metrics computed.
-- Explainability layer integrated and tested.
-- For RAG systems: source attribution tested, classification marker logic tested, clearance-level access controls tested.
-- Model Card version 1 produced.
-- Embedding model Arabic quality evaluated (where applicable).
-
-**Output:** Model Ethics Review Report. Signed off by the Technical Lead and the Ethical AI Officer.
-
----
-
-#### Gate 3 — Pre-Deployment Audit
-*Triggered at: Model passes functional testing and is ready for UAT*
-
-**Activities:**
-- Adversarial testing and prompt injection testing.
-- Output filtering layer tested with adversarial classified-content extraction attempts.
-- HITL workflow verification.
-- Override and rejection mechanism tested.
-- Security scan (CVE scan, dependency audit).
-- Penetration test of classified document pipeline (if classified documents are to be ingested in production).
-- Arabic performance benchmark (where applicable).
-- Domain expert review of sample outputs.
-
-**Output:** Pre-Deployment Ethics Audit Checklist — all items must be checked and signed off before UAT begins.
-
----
-
-#### Gate 4 — Go-Live Ethics Clearance
-*Triggered at: UAT passed and production deployment approved*
-
-**Activities:**
-- Final Model Card published and version-controlled.
-- Decision Classification Matrix approved by client stakeholders.
-- Monitoring dashboards active: fairness monitoring, drift detection, access anomaly detection.
-- Rollback procedure tested.
-- Classified document ingestion formally authorised in writing by the document owner or classification authority.
-
-**Output:** Signed Go-Live Ethics Clearance. This document is retained as the formal record of authorisation for the system to process the specified document corpus in production.
-
----
-
-#### Gate 5 — Continuous Monitoring
-*Triggered at: System is live — ongoing*
-
-**Monthly activities:**
-- Fairness monitoring dashboard review.
-- Bias alert triage (SLA: five business days per alert).
-- Drift detection review.
-- Access anomaly review: any unusual patterns in query volumes, retrieval behaviour, or output patterns that might indicate adversarial use or classified content extraction attempts.
-
-**Quarterly activities:**
-- Model Card review and update.
-- HITL override log review.
-- Corpus review: has the document corpus been updated? If so, re-run the corpus audit and bias assessment.
-
-**Annual activities:**
-- Full Ethical Impact Review.
-- Ethical Compliance Certificate issued.
-
-**Triggered re-entry:** If a significant model change, corpus update, or classification reclassification occurs, the system re-enters the lifecycle at Gate 2 (if the model is retrained) or Gate 3 (if only configuration or corpus changes are made).
-
-**Output:** Monthly Ethics Health Report (automated), Quarterly Review Record, Annual Ethical Compliance Certificate.
-
----
-
-#### Gate 6 — Decommissioning Review
-*Triggered at: System is being retired or replaced*
-
-**Activities:**
-- Data disposal review: what happens to classified document embeddings in the vector store? Embeddings derived from classified documents must be disposed of in accordance with the government's document disposal policy — they are not generic technical artefacts.
-- Vector store purge verification: confirm that classified embeddings have been deleted and that deletion is irreversible.
-- Output archiving: AI-generated outputs retained as part of the government record archive if they were used to inform policy decisions.
-- Lessons learned brief produced.
-
-**Output:** Decommission Ethics Checklist, Archived Model Card, Lessons Learned Brief.
-
----
-
-### 7.3 Mid-Lifecycle Trigger Events
-
-In addition to the seven gates, the following events trigger an immediate ethics review outside the normal schedule:
-
-| Trigger Event | Required Response |
-|---|---|
-| Classified document corpus updated with new or reclassified documents | Corpus audit re-run; Model Card updated; if corpus change is substantial, re-enter at Gate 2 or 3 |
-| A document in the corpus is reclassified to a higher level | Immediate access control review; confirm the vector embeddings of that document are now restricted to the higher clearance level |
-| Bias alert generated by monitoring system | Triage within five business days; formal response documented |
-| Adversarial query pattern detected | Security review within 24 hours; consider temporary suspension of classified document retrieval pending investigation |
-| Model performance degrades below agreed thresholds | Re-enter at Gate 2 for model ethics review before any retraining is deployed |
-| Regulatory change (e.g. update to PDPL or government classification policy) | Framework review within 30 days; update relevant pillar requirements |
-| Personnel change affecting the Ethical AI Officer or Senior Sponsor role | Handover review within 10 business days; updated RACI documented |
-
----
-
-### 7.4 What Stakeholders Actually See On the Ground
-
-| Stakeholder | What They Receive |
-|---|---|
-| Ministry Decision-Maker | AI recommendations arrive with a plain-language explanation, a confidence level, source attribution (document IDs and classification levels), and a human reviewer's approval stamp before any action is taken |
-| Government Analyst (system user) | AI outputs are clearly labelled with their classification level; source documents are cited; an Accept / Reject / Override control is present on every recommendation; clearance-level filtering is automatic |
-| Technical Team | A checklist at each gate, documented tooling requirements (explainability library, bias scanner, vector store encryption, output filter), Model Card template, and Dataset Datasheet template |
-| Information Security / Classification Authority | A formal Go-Live Ethics Clearance document authorising AI processing of each document class; access control test results; penetration test report; annual compliance certificate |
-| Procurement Team | A vendor ethics attestation form to be included in future AI procurement tenders |
-| Internal Audit | A complete, auditable trail: Model Cards, Ethics Review Reports, override logs, corpus audit records, access anomaly logs, classified document disposal records |
-
----
-
-## 8. Assumptions
+## 7. Assumptions
 
 The following assumptions define the conditions under which this framework operates. Where an assumption does not hold, a formal compensating control or documented exception is required.
 
@@ -549,126 +442,357 @@ Where Arabic-language documents are part of the corpus, the framework assumes th
 
 ---
 
-## 9. Technical Lifecycle — The Ethical AI Cycle
+## 8. The Ethical and Responsible AI Governance Cycle
 
-The diagram below represents the Ethical AI Lifecycle as a continuous governance cycle. The cycle is not linear — operational monitoring feeds back into the build and design phases whenever significant changes are detected.
+The governance cycle is the operational engine of this framework. It is a six-phase continuous loop — not a one-time project checklist. Every AI system in the programme enters the cycle at Phase 1 and, once deployed, continuously re-enters at the appropriate phase whenever the system, its data, its classification context, or its operating environment changes materially.
+
+The cycle is designed to serve both framework dimensions simultaneously. The early phases (1–2) establish the ethical and responsible foundation: what kind of system this is, and what obligations attach to it. The middle phases (3–4) operationalise those obligations into concrete risk identification and technical controls. The later phases (5–6) ensure the system continues to live up to both its ethical values and its responsible governance commitments over time — not just at go-live.
 
 ```
 ╔══════════════════════════════════════════════════════════════════════════════════╗
-║         QATAR ECONOMIC GOVERNMENT — ETHICAL AI GOVERNANCE LIFECYCLE             ║
+║      QATAR ECONOMIC GOVERNMENT — ETHICAL & RESPONSIBLE AI GOVERNANCE CYCLE      ║
 ╚══════════════════════════════════════════════════════════════════════════════════╝
 
-     ┌────────────────────────────────────────────────────────────────────────┐
-     │                    CONTINUOUS IMPROVEMENT LOOP                        │
-     │                                                                        │
-     ▼                                                                        │
- ┌────────────────┐                                                           │
- │  GATE 0        │  INITIATION                                               │
- │  Ethics        │  ▸ Ethics Screening Questionnaire                         │
- │  Screening     │  ▸ Risk Classification: Low / Medium / High               │
- │                │  ▸ Classified document ingestion? → Flag for Pillar 3/5   │
- └───────┬────────┘  OUTPUT: Ethics Screening Record                          │
-         │                                                                    │
-         ▼                                                                    │
- ┌────────────────┐                                                           │
- │  GATE 1        │  DATA & DOCUMENT ETHICS PLANNING                          │
- │  Data Ethics   │  ▸ Document classification (Public/Internal/              │
- │  Plan          │    Confidential/Classified/Top Secret)                    │
- │                │  ▸ Legal authority for AI processing confirmed            │
- │                │  ▸ Data lineage mapping                                   │
- │                │  ▸ Corpus representativeness / bias risk assessment       │
- │                │  ▸ Privacy-by-design review                               │
- │                │  ▸ Infrastructure sovereign compliance confirmed          │
- └───────┬────────┘  OUTPUT: Data Ethics Plan + Corpus Classification Report  │
-         │                                                                    │
-         ▼                                                                    │
- ┌────────────────┐                                                           │
- │  GATE 2        │  MODEL ETHICS REVIEW                                      │
- │  Model Ethics  │  ▸ Bias audit (training data / document corpus)           │
- │  Review        │  ▸ Fairness metrics computed                              │
- │                │  ▸ Explainability layer integrated (SHAP / citation)      │
- │                │  ▸ Source attribution & classification markers tested      │
- │                │  ▸ Clearance-level access controls tested                 │
- │                │  ▸ Embedding model Arabic quality evaluated               │
- │                │  ▸ Model Card v1 produced                                 │
- └───────┬────────┘  OUTPUT: Model Ethics Review Report + Model Card v1       │
-         │                                                                    │
-         ▼                                                                    │
- ┌────────────────┐                                                           │
- │  GATE 3        │  PRE-DEPLOYMENT AUDIT                                     │
- │  Pre-Deploy    │  ▸ Adversarial / prompt injection testing                 │
- │  Audit         │  ▸ Classified content extraction attempt testing          │
- │                │  ▸ Output filtering layer tested                          │
- │                │  ▸ HITL workflow and override mechanism tested             │
- │                │  ▸ CVE / dependency security scan                         │
- │                │  ▸ Penetration test of classified document pipeline        │
- │                │  ▸ Domain expert output review                            │
- └───────┬────────┘  OUTPUT: Pre-Deployment Ethics Audit Checklist            │
-         │                                                                    │
-         ▼                                                                    │
- ┌────────────────┐                                                           │
- │  GATE 4        │  GO-LIVE                                                  │
- │  Go-Live       │  ▸ Final Model Card published                             │
- │  Clearance     │  ▸ Decision Classification Matrix approved                │
- │                │  ▸ Monitoring dashboards live                             │
- │                │  ▸ Rollback procedure tested                              │
- │                │  ▸ Classified document ingestion formally authorised      │
- └───────┬────────┘  OUTPUT: Signed Go-Live Ethics Clearance                  │
-         │                                                                    │
-         ▼                                                                    │
- ┌──────────────────────────────────────────────────┐                         │
- │  GATE 5 — CONTINUOUS OPERATIONS MONITORING       │                         │
- │                                                  │                         │
- │  MONTHLY:                                        │                         │
- │  ▸ Fairness monitoring dashboard review          │                         │
- │  ▸ Bias alert triage (SLA: 5 business days)      │  Significant change     │
- │  ▸ Drift detection                               │  detected?              │
- │  ▸ Access anomaly review (classified pipeline)   │                         │
- │                                                  │  → Model/corpus change  │
- │  QUARTERLY:                                      │    → Re-enter Gate 2    │
- │  ▸ Model Card update                             │                         │
- │  ▸ HITL override log review                      │  → Config/access change │
- │  ▸ Corpus update review                          │    → Re-enter Gate 3    │
- │                                                  │                         │
- │  ANNUALLY:                                       │                         │
- │  ▸ Full Ethical Impact Review                    │                         │
- │  ▸ Ethical Compliance Certificate                │                         │
- └──────────────────────┬───────────────────────────┘                         │
-                        │                                                     │
-                        ▼                                                     │
- ┌────────────────┐                                                           │
- │  GATE 6        │  DECOMMISSIONING                                          │
- │  Decommission  │  ▸ Classified embedding disposal and verification         │
- │  Review        │  ▸ Vector store purge                                     │
- │                │  ▸ Output archive for policy decisions                    │
- │                │  ▸ Lessons learned brief                                  │
- └────────────────┘  OUTPUT: Decommission Checklist + Lessons Learned         │
-                                                                              │
-     └────────────────────────────────────────────────────────────────────────┘
-              Lessons learned feed into the next AI initiative's Gate 0
+                         ┌─────────────────────────┐
+                    ┌───▶│  PHASE 6                 │───┐
+                    │    │  CONTINUOUSLY IMPROVE    │   │
+                    │    └─────────────────────────┘   │
+                    │                                   ▼
+         ┌──────────────────┐               ┌─────────────────────────┐
+         │  PHASE 5         │               │  PHASE 1                │
+         │  MONITOR         │               │  CLASSIFY AI/ML         │
+         │  OUTCOMES        │               │  MODEL TYPE             │
+         └──────────────────┘               └─────────────────────────┘
+                    ▲                                   │
+                    │                                   ▼
+         ┌──────────────────┐               ┌─────────────────────────┐
+         │  PHASE 4         │               │  PHASE 2                │
+         │  APPLY           │◀──────────────│  DEFINE AI POLICY       │
+         │  CONTROLS        │               └─────────────────────────┘
+         └──────────────────┘                           │
+                    ▲                                   ▼
+                    │               ┌─────────────────────────┐
+                    └───────────────│  PHASE 3                │
+                                    │  IDENTIFY AI RISKS      │
+                                    └─────────────────────────┘
 ```
+
+---
+
+### Phase 1 — Classify AI/ML Model Type `Both`
+
+**Purpose:** Different AI model types carry fundamentally different ethical risks and responsible governance requirements. The classification step determines which ethical considerations are primary for this system, shapes the risk identification in Phase 3, and determines the intensity of controls required in Phase 4. No two model types are governed identically.
+
+#### AI/ML Model Type Classification Table
+
+| Model Type | Description | Primary Ethical Considerations |
+|---|---|---|
+| **Generative AI / LLM** | Text generation, summarisation, Q&A, report drafting | Hallucination of facts, prompt injection attacks, output unpredictability, classified content leakage through generation, attribution accuracy |
+| **RAG Pipeline** | Retrieval-Augmented Generation over a document corpus | Retrieval bias (what gets retrieved determines what the model reasons over), classified document exposure, corpus representativeness, source attribution accuracy, clearance-level access enforcement |
+| **Predictive / Forecasting Model** | Time-series forecasting, regression, economic projections | Historical bias perpetuation, false confidence in projections, uncertainty quantification, sector imbalance in training data |
+| **Classification Model** | Entity/document categorisation, risk tiering, routing | Demographic and sector bias in class assignments, threshold fairness (false positive vs. false negative harm asymmetry), explainability of classification decisions |
+| **Recommendation System** | Policy/action suggestions, investment recommendations, sector intervention proposals | Feedback loop bias (recommendations reinforce existing patterns), explainability of why a recommendation was made, disproportionate influence on resource allocation |
+| **Anomaly Detection** | Unusual pattern flagging in economic activity or document usage | False positive harm (incorrectly flagging legitimate activity), disproportionate flagging of smaller or underrepresented entities, opacity of anomaly definition |
+
+#### Classification Outputs
+
+At the end of Phase 1, two things are produced:
+
+1. **Model Type Classification Record** — Documents which model type(s) apply to the system (a single system may combine types, e.g. a RAG pipeline using an LLM for generation), and which primary ethical considerations are therefore active.
+
+2. **Ethical Risk Intensity Rating** — A preliminary rating (Low / Medium / High) based on model type and intended use:
+
+| Combination | Default Intensity |
+|---|---|
+| LLM or RAG + Classified document ingestion | High |
+| LLM or RAG + Internal/Confidential documents only | Medium–High |
+| Predictive or Forecasting + Policy-level output | High |
+| Classification + Advisory or Critical decision | Medium–High |
+| Recommendation + Policy-level output | High |
+| Anomaly Detection + Operational output only | Medium |
+| Any model type + Public-facing output | Elevated by one level |
+
+---
+
+### Phase 2 — Define AI Policy `Responsible AI`
+
+**Purpose:** Based on the model type and its ethical risk intensity, define the specific policy that governs this AI system. This is the primary Responsible AI phase — it translates the values identified in Phase 1 into concrete organisational commitments, legal compliance obligations, and governance rules. Policy is not generic — it is tailored to the model type, the data it uses, the decisions it informs, and the users it serves.
+
+#### Policy Definition Areas
+
+**Data and Document Policy**
+- Which document classification levels are permitted as input to this system?
+- What is the legal authority for AI processing of each document class?
+- Where must inference, embedding, and storage occur (in-country infrastructure requirements)?
+- What data retention and disposal rules apply to this system's outputs and to the vector embeddings of its source documents?
+
+**Access and Clearance Policy**
+- Who is permitted to query this system?
+- What clearance level is required to receive outputs derived from Classified or Confidential source documents?
+- How is clearance enforced at the retrieval layer (for RAG systems) and at the output layer?
+
+**Output and Decision Policy**
+- What is the Decision Classification Matrix for this system? Which outputs are Informational, Advisory, or Critical?
+- What human oversight is mandatory before an Advisory or Critical output can be acted upon?
+- Must AI-generated outputs carry a classification marker inherited from their source documents?
+
+**Explainability Policy**
+- What level of explanation must accompany each output? (Confidence score only / feature attribution / full source citation)
+- For RAG systems: must source documents be cited, and must their classification level be disclosed alongside the output?
+
+**Vendor and Third-Party Policy**
+- If the system uses third-party model components, what attestation must the vendor provide?
+- Are there any model components (e.g. external LLM APIs) that are prohibited due to classified data handling requirements?
+
+#### Policy Output
+
+**AI System Policy Document** — A concise, system-specific policy document (distinct from this framework) that records all decisions made in Phase 2. This document is reviewed and signed off by the Ethical AI Officer before Phase 3 begins.
+
+---
+
+### Phase 3 — Identify AI Risks `Both`
+
+**Purpose:** With the model type known and the policy defined, systematically identify the ethical risks (bias, opacity, privacy violation, cultural harm) and responsible AI risks (governance gaps, compliance failures, reliability issues, security vulnerabilities) specific to this system. Risk identification is structured by the active ethical pillars and informed by the model type classification from Phase 1.
+
+#### Risk Identification by Model Type
+
+**Risks specific to LLM / Generative AI systems:**
+- Model hallucination: generating plausible but factually incorrect economic figures or policy statements
+- Prompt injection: adversarial inputs manipulating the model to produce harmful, biased, or classified outputs
+- Output unpredictability: outputs that are inconsistent across similar queries, undermining trust in advisory use
+- Over-reliance: users treating generated content as authoritative without applying critical review
+
+**Risks specific to RAG pipelines over classified documents:**
+- Retrieval bias: the retrieval mechanism systematically returning documents that favour certain sectors, periods, or viewpoints, skewing the model's reasoning
+- Classified content leakage: LLM generating responses that include verbatim or near-verbatim excerpts from classified documents, surfacing to users without appropriate clearance
+- Corpus gap risk: underrepresented sectors or topics in the document corpus leading to systematic blind spots in AI outputs
+- Clearance bypass: a user with lower clearance accessing AI outputs that were informed by documents above their clearance level
+- Embedding exfiltration: vector embeddings of classified documents being accessed or extracted outside authorised channels
+
+**Risks specific to predictive / forecasting models:**
+- Historical bias: models trained on historical economic data perpetuating past sector imbalances into future forecasts
+- False precision: forecast outputs presented with unjustified confidence, leading to over-reliance in policy decisions
+- Data staleness: model trained on data that no longer reflects the current economic environment
+
+**Risks specific to classification models:**
+- Sector or entity bias: classification outcomes systematically disadvantaging certain sectors, SMEs vs. large entities, or geographic regions within Qatar
+- Threshold inequity: the chosen decision threshold producing asymmetric harm (e.g. higher false positive rates for smaller entities)
+
+**Risks specific to recommendation systems:**
+- Feedback amplification: recommendations that reinforce existing resource concentrations, making the rich-get-richer dynamic worse
+- Opacity: decision-makers unable to understand or challenge why a recommendation was made
+
+**Risks specific to anomaly detection:**
+- False positive harm: legitimate economic activity being incorrectly flagged, triggering unnecessary scrutiny of entities
+- Definition opacity: what counts as anomalous is not transparent to the people being monitored
+
+#### Risk Register Output
+
+A **System-Specific AI Risk Register** is produced at the end of Phase 3. It records:
+- Risk ID and description
+- Model type it originates from
+- Ethical pillar it falls under
+- Likelihood and impact rating
+- Mapped control (to be confirmed in Phase 4)
+- Owner
+
+---
+
+### Phase 4 — Apply Controls `Both`
+
+**Purpose:** For each risk identified in Phase 3, apply the appropriate technical and governance control. Ethical AI controls address values-based risks (bias, opacity, privacy). Responsible AI controls address governance and operational risks (accountability gaps, security vulnerabilities, compliance deficiencies). Controls are drawn from the seven pillars defined in Section 5. This phase is where the pillars become concrete implementation tasks.
+
+#### Control Categories
+
+**Transparency Controls**
+- Publish and version-control the Model Card before deployment
+- Integrate explainability layer (SHAP for ML models; citation-backed generation for RAG/LLM systems)
+- Implement source attribution in RAG pipeline outputs — each response cites the document IDs and classification levels that informed it
+- Apply classification markers to AI outputs derived from classified source documents
+- Activate inference logging (query, output, model version, source document IDs, timestamp)
+
+**Fairness Controls**
+- Execute pre-ingestion corpus audit — assess representational balance across sectors, entity types, and time periods
+- Run bias audit on training data for all ML models
+- Compute and baseline fairness metrics (demographic parity, equalised odds, individual fairness)
+- Document corpus gaps in the Model Card and surface them to users in the system interface
+
+**Privacy and Data Sovereignty Controls**
+- Apply document classification schema to all corpus documents before ingestion
+- Enforce infrastructure routing: Classified and Confidential documents processed only on in-country infrastructure
+- Implement vector store encryption (AES-256 or equivalent) for all stores containing classified embeddings
+- Enforce physical or logical isolation between vector stores of different classification levels
+- Implement clearance-level access control at the retrieval layer of all RAG systems
+- Document data lineage for all ingested documents
+
+**Accountability Controls**
+- Build Human-in-the-Loop (HITL) gates into all Advisory and Critical output workflows
+- Implement Accept / Reject / Override controls on all AI recommendation interfaces, with logged justification
+- Implement classified source disclosure: inform human reviewers when an AI recommendation is based on classified documents, even if they cannot see the document content directly
+- Define and document escalation paths for anomalous outputs, silent failures, and adversarial activity
+
+**Robustness and Security Controls**
+- Conduct prompt injection and adversarial testing before any RAG or LLM system goes live with classified documents
+- Deploy output filtering layer to detect and block responses containing direct excerpts from classified documents
+- Implement input validation and sanitisation on all inference endpoints
+- Deploy rate limiting and anomaly detection on inference APIs
+- Conduct penetration test of the full classified document pipeline (embedding → vector store → retrieval → LLM → output)
+- Scan all model dependencies and container images for CVEs in the CI/CD pipeline
+
+**Sustainability Controls**
+- Document compute footprint (GPU/CPU hours, estimated kWh) in the Model Card
+- Evaluate model compression options (quantisation, pruning) before production scaling
+
+**Inclusivity and Cultural Alignment Controls**
+- Benchmark embedding model Arabic language quality before corpus ingestion begins
+- Run Arabic performance benchmark for all user-facing outputs where Arabic is required
+- Obtain domain expert sign-off on sample outputs before go-live
+
+#### Go-Live Clearance
+
+At the conclusion of Phase 4, before the system is deployed to production:
+
+- Final Model Card published and version-controlled
+- System-Specific AI Risk Register reviewed and all High risks confirmed as mitigated or formally accepted
+- Decision Classification Matrix approved by client stakeholders
+- Classified document ingestion formally authorised in writing by the Classification Authority
+- Monitoring dashboards confirmed active
+- Rollback procedure tested
+
+**Output:** Signed Go-Live Ethics Clearance
+
+---
+
+### Phase 5 — Monitor Outcomes `Responsible AI`
+
+**Purpose:** Verify that the controls applied in Phase 4 are working as intended in the live environment. Monitoring is the primary ongoing Responsible AI obligation — it is the mechanism by which the organisation demonstrates that its ethical commitments are not theoretical but actively maintained. It also surfaces ethical drift: cases where a system that was ethically sound at launch has degraded over time. Monitoring is not passive — it is an active process of detecting ethical drift, performance degradation, access anomalies, and changed risk conditions.
+
+#### Monitoring Schedule
+
+**Monthly:**
+- Fairness monitoring dashboard review — track output distribution across sectors, entity types, and query types against the established baseline
+- Bias alert triage — any automated alert from the fairness monitoring system must be triaged within five business days
+- Model drift detection — detect shifts in output patterns that may indicate the model is behaving differently from its evaluated state
+- Access anomaly review — review any unusual patterns in query volumes, retrieval behaviour, or bulk access attempts that may indicate adversarial use or classified content extraction attempts
+
+**Quarterly:**
+- Model Card review and update — update performance metrics, known issues, and corpus composition
+- HITL override log review — analyse patterns in human overrides to identify systematic model errors or user trust issues
+- Corpus update review — if new documents have been ingested, re-run the corpus audit and bias assessment
+
+**Annually:**
+- Full Ethical Impact Review — comprehensive review of all seven pillars against the live system
+- Ethical Compliance Certificate — issued by the Ethical AI Officer confirming the system remains compliant with the framework
+
+#### Monitoring Outputs
+
+| Frequency | Output |
+|---|---|
+| Monthly | Ethics Health Report (automated dashboard + written summary) |
+| Quarterly | Quarterly Review Record |
+| Annually | Ethical Compliance Certificate |
+| On-demand | Incident Report (for any triggered mid-cycle event) |
+
+#### Mid-Cycle Trigger Events
+
+The following events trigger an immediate re-entry into the cycle at the specified phase, outside the normal monitoring schedule:
+
+| Trigger Event | Re-entry Point | Required Response |
+|---|---|---|
+| Classified document corpus updated with new or reclassified documents | Phase 3 | Corpus audit re-run; bias assessment updated; Model Card updated |
+| A document in the corpus is reclassified to a higher level | Phase 4 | Immediate access control review; confirm embeddings are now restricted to higher clearance level |
+| Bias alert generated | Phase 4 | Triage within five business days; document response |
+| Adversarial query pattern detected | Phase 4 | Security review within 24 hours; consider temporary suspension of classified document retrieval |
+| Model performance degrades below agreed thresholds | Phase 3 | Re-run risk assessment before any retraining is deployed |
+| Regulatory change (PDPL update, classification policy revision) | Phase 2 | Policy review within 30 days; update affected controls |
+| System decommissioned or replaced | Decommission | Classified embedding disposal; vector store purge; output archiving; lessons learned |
+
+---
+
+### Phase 6 — Continuously Improve `Both`
+
+**Purpose:** Feed the findings from monitoring back into the cycle to make each iteration of the system — and each new AI system — both more ethically sound and more responsibly governed than the last. Continuous improvement is what distinguishes a living framework from a one-time compliance exercise. Continuous improvement is what transforms the framework from a compliance checkbox into a genuine institutional capability.
+
+#### Improvement Inputs
+
+- Findings from monthly, quarterly, and annual monitoring reviews
+- Patterns identified in HITL override logs (systematic model errors that humans are consistently correcting)
+- Bias alerts and their root cause analyses
+- Adversarial test results and security incident reports
+- Feedback from domain experts and system users
+- Changes in the external standards landscape (updated OECD principles, new ISO standards, PDPL amendments)
+- Lessons learned from decommissioned systems
+
+#### Improvement Actions
+
+| Finding Type | Improvement Action | Re-entry Phase |
+|---|---|---|
+| Model producing systematically biased outputs | Update training data or corpus; retrain or fine-tune model | Phase 1 (re-classify if model type changes) or Phase 3 |
+| Policy found to be insufficient (e.g. new classification level introduced) | Update the AI System Policy Document | Phase 2 |
+| New risk identified not in original risk register | Add to risk register; identify and apply new control | Phase 3 → Phase 4 |
+| Control found to be ineffective | Strengthen or replace the control | Phase 4 |
+| Monitoring gap identified | Add new monitoring metric or alert | Phase 5 |
+| Framework pillar found to be inapplicable or missing | Update this framework document | All phases |
+
+#### Improvement Governance
+
+- Improvement actions are tracked in a **Framework Improvement Log** maintained by the Ethical AI Officer.
+- Any change to a deployed system's controls or policy triggered by Phase 6 requires sign-off by the Ethical AI Officer before implementation.
+- Framework-level changes (updates to the pillars, standards references, or cycle structure) require sign-off by the Senior Sponsor.
+- The Framework Improvement Log is reviewed at the Annual Ethical Impact Review.
+
+---
+
+## 9. Trigger Conditions and On-Ground Outcomes
+
+### 9.1 What Stakeholders Actually See On the Ground
+
+| Stakeholder | What They Receive |
+|---|---|
+| Ministry Decision-Maker | AI recommendations arrive with a plain-language explanation, a confidence level, source attribution (document IDs and classification levels), and a human reviewer's approval stamp before any action is taken |
+| Government Analyst (system user) | AI outputs are clearly labelled with their classification level; source documents are cited; an Accept / Reject / Override control is present on every recommendation; clearance-level filtering is automatic |
+| Technical Team | A structured six-phase cycle with documented tooling requirements per phase (explainability library, bias scanner, vector store encryption, output filter, monitoring dashboard), Model Card template, and Dataset Datasheet template |
+| Information Security / Classification Authority | A formal Go-Live Ethics Clearance document authorising AI processing of each document class; access control test results; penetration test report; annual compliance certificate |
+| Procurement Team | A vendor ethics attestation form to be included in future AI procurement tenders |
+| Internal Audit | A complete, auditable trail: Model Cards, AI System Policy Documents, Risk Registers, Go-Live Clearances, override logs, corpus audit records, access anomaly logs, classified document disposal records |
+
+### 9.2 Mid-Cycle Trigger Summary
+
+The cycle is also triggered — and re-entered at the appropriate phase — by any of the following operational events:
+
+| Event | Phase Re-entry |
+|---|---|
+| New AI use case initiated | Phase 1 |
+| Existing model retrained on new data | Phase 3 |
+| Document corpus updated or reclassified | Phase 3 |
+| New risk identified in live system | Phase 3 |
+| Control found ineffective | Phase 4 |
+| Regulatory or policy change | Phase 2 |
+| Adversarial incident detected | Phase 4 |
+| System decommissioned | Decommission procedure |
 
 ---
 
 ## 10. Roles and Responsibilities
 
-| Activity | Ethical AI Officer | Technical Lead | Data / Doc Engineer | Domain Expert | Classification Authority | Senior Sponsor |
-|---|---|---|---|---|---|---|
-| Ethics Screening (Gate 0) | A | R | C | C | C | I |
-| Data Ethics Plan (Gate 1) | A | R | R | C | R | I |
-| Model Ethics Review (Gate 2) | A | R | C | C | I | I |
-| Pre-Deployment Audit (Gate 3) | A | R | C | R | C | I |
-| Classified ingestion authorisation (Gate 4) | R | C | I | I | A | I |
-| Go-Live Clearance (Gate 4) | R | R | I | I | C | A |
-| Monthly Monitoring (Gate 5) | R | R | R | C | I | I |
-| Annual Ethical Impact Review (Gate 5) | R | C | C | C | C | A |
-| Corpus update review (mid-lifecycle) | A | R | R | C | C | I |
-| Adversarial / anomaly response (mid-lifecycle) | A | R | R | I | I | I |
-| Decommission Review (Gate 6) | A | R | R | I | R | I |
-
 *R = Responsible, A = Accountable, C = Consulted, I = Informed*
 
-**Ethical AI Officer** — The designated individual or team responsible for framework sign-off at each gate. Must have independence from the delivery team.
+| Activity | Ethical AI Officer | Technical Lead | Data / Doc Engineer | Domain Expert | Classification Authority | Senior Sponsor |
+|---|---|---|---|---|---|---|
+| Phase 1 — Model Type Classification | A | R | C | C | C | I |
+| Phase 2 — AI Policy Definition | A | R | C | C | R | I |
+| Phase 3 — Risk Identification | A | R | R | C | C | I |
+| Phase 4 — Control Implementation | A | R | R | C | C | I |
+| Phase 4 — Classified Ingestion Authorisation | R | C | I | I | A | I |
+| Phase 4 — Go-Live Ethics Clearance | R | R | I | I | C | A |
+| Phase 5 — Monthly Monitoring | R | R | R | C | I | I |
+| Phase 5 — Annual Ethical Impact Review | R | C | C | C | C | A |
+| Phase 5 — Corpus Update Review | A | R | R | C | C | I |
+| Phase 5 — Adversarial / Anomaly Response | A | R | R | I | I | I |
+| Phase 6 — Continuous Improvement Actions | A | R | C | C | C | I |
+| Decommission Review | A | R | R | I | R | I |
+
+**Ethical AI Officer** — The designated individual or team responsible for framework sign-off at each phase. Must have independence from the delivery team.
 
 **Classification Authority** — The government-designated authority responsible for document classification decisions. Must formally authorise the ingestion of classified documents into any AI system.
 
@@ -680,25 +804,27 @@ Every AI system governed by this framework produces the following documented art
 
 | Artefact | Produced At | Owner | Retention |
 |---|---|---|---|
-| Ethics Screening Record | Gate 0 | Ethical AI Officer | Programme duration + 5 years |
-| Data Ethics Plan | Gate 1 | Technical Lead + Data Engineer | Programme duration + 5 years |
-| Dataset / Corpus Datasheet | Gate 1/2 | Data Engineer | Programme duration + 5 years |
-| Corpus Classification and Representativeness Report | Gate 1 | Data Engineer | Programme duration + 5 years |
-| Bias Audit Report | Gate 2 | Technical Lead | Programme duration + 5 years |
-| Model Card (versioned) | Gate 2 → updated at Gate 4 and quarterly | Technical Lead | Programme duration + 5 years |
-| Model Ethics Review Report | Gate 2 | Ethical AI Officer | Programme duration + 5 years |
-| Pre-Deployment Ethics Audit Checklist | Gate 3 | Technical Lead | Programme duration + 5 years |
-| Penetration Test Report (classified pipeline) | Gate 3 | Security Lead | Programme duration + 5 years |
-| Decision Classification Matrix | Gate 4 | Ethical AI Officer + Domain Expert | System life + 5 years |
-| Classified Document Ingestion Authorisation | Gate 4 | Classification Authority | System life + 5 years |
-| Go-Live Ethics Clearance | Gate 4 | Ethical AI Officer + Senior Sponsor | System life + 5 years |
-| Monthly Ethics Health Report | Gate 5 (ongoing) | Technical Lead | 5 years |
-| Quarterly Review Record | Gate 5 (quarterly) | Ethical AI Officer | 5 years |
-| Annual Ethical Compliance Certificate | Gate 5 (annual) | Ethical AI Officer | 10 years |
-| HITL Override Log | Gate 5 (ongoing) | System Administrator | System life + 5 years |
-| Decommission Ethics Checklist | Gate 6 | Ethical AI Officer | 10 years |
-| Classified Embedding Disposal Verification | Gate 6 | Classification Authority + Technical Lead | 10 years |
-| Lessons Learned Brief | Gate 6 | Ethical AI Officer | Permanent |
+| Model Type Classification Record | Phase 1 | Technical Lead | Programme duration + 5 years |
+| Ethical Risk Intensity Rating | Phase 1 | Ethical AI Officer | Programme duration + 5 years |
+| AI System Policy Document | Phase 2 | Ethical AI Officer | System life + 5 years |
+| System-Specific AI Risk Register | Phase 3 | Technical Lead + Ethical AI Officer | System life + 5 years |
+| Corpus Classification and Representativeness Report | Phase 3 | Data Engineer | Programme duration + 5 years |
+| Bias Audit Report | Phase 3 | Technical Lead | Programme duration + 5 years |
+| Dataset / Corpus Datasheet | Phase 3 | Data Engineer | Programme duration + 5 years |
+| Model Card (versioned) | Phase 4 → updated quarterly | Technical Lead | Programme duration + 5 years |
+| Pre-Deployment Ethics Audit Checklist | Phase 4 | Technical Lead | Programme duration + 5 years |
+| Penetration Test Report (classified pipeline) | Phase 4 | Security Lead | Programme duration + 5 years |
+| Decision Classification Matrix | Phase 4 | Ethical AI Officer + Domain Expert | System life + 5 years |
+| Classified Document Ingestion Authorisation | Phase 4 | Classification Authority | System life + 5 years |
+| Go-Live Ethics Clearance | Phase 4 | Ethical AI Officer + Senior Sponsor | System life + 5 years |
+| Monthly Ethics Health Report | Phase 5 (monthly) | Technical Lead | 5 years |
+| Quarterly Review Record | Phase 5 (quarterly) | Ethical AI Officer | 5 years |
+| Annual Ethical Compliance Certificate | Phase 5 (annual) | Ethical AI Officer | 10 years |
+| HITL Override Log | Phase 5 (ongoing) | System Administrator | System life + 5 years |
+| Framework Improvement Log | Phase 6 (ongoing) | Ethical AI Officer | Permanent |
+| Decommission Ethics Checklist | Decommission | Ethical AI Officer | 10 years |
+| Classified Embedding Disposal Verification | Decommission | Classification Authority + Technical Lead | 10 years |
+| Lessons Learned Brief | Decommission | Ethical AI Officer | Permanent |
 
 ---
 
@@ -707,4 +833,4 @@ Every AI system governed by this framework produces the following documented art
 ---
 
 *Document Classification: Confidential*
-*Version 1.0 — Qatar Economic Government — Ethical AI Framework — April 2026*
+*Version 1.0 — Qatar Economic Government — Ethical and Responsible AI Framework — April 2026*
