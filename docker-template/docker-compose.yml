@@ -1,0 +1,89 @@
+# =============================================================================
+# DOCKER COMPOSE TEMPLATE
+# =============================================================================
+# Placeholders to replace (use Ctrl+F to find each one):
+#
+#   {{APP_NAME}}                   e.g. docchecker
+#   {{BACKEND_PORT}}               e.g. 8081
+#   {{FRONTEND_PORT}}              e.g. 3000
+#   {{BACKEND_URL_DEFAULT}}        e.g. http://backend:8081
+#   {{BACKEND_HEALTHCHECK_PATH}}   e.g. http://localhost:8081/api/healthz
+#
+# READ BEFORE EDITING:
+#   - backend and frontend use `expose` (not `ports`) — they are NOT reachable
+#     from your host machine. Only nginx is publicly exposed on port 80.
+#   - The healthcheck uses Python (not curl) because slim Python images do not
+#     include curl. Python is always available in a Python container.
+#   - Add a `depends_on` entry to nginx for any new service that must be ready
+#     before nginx starts routing to it.
+#
+# OPTIONAL EXTENSIONS (see README.md for full snippets):
+#   - SQL Server / PostgreSQL database
+#   - LDAP (containerised OpenLDAP)
+#   - Apache Airflow (webserver + scheduler + postgres)
+#   - Additional frontend (e.g. Vite app on a separate port)
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # BACKEND — Python/FastAPI (or any other language, update Dockerfile)
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend          # path to the folder containing the backend Dockerfile
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env            # secrets — never committed to git
+    expose:
+      - "{{BACKEND_PORT}}"        # only reachable within Docker network
+    healthcheck:
+      # Uses Python's built-in urllib — no curl needed
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('{{BACKEND_HEALTHCHECK_PATH}}')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s           # give the backend time to start before first check
+
+  # ---------------------------------------------------------------------------
+  # FRONTEND — Next.js (or Vite/CRA, update Dockerfile accordingly)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend         # path to the folder containing the frontend Dockerfile
+      dockerfile: Dockerfile
+    environment:
+      # Tells the Next.js server where to reach the backend for SSR rewrites.
+      # Uses the Docker service name — NOT localhost.
+      - BACKEND_URL={{BACKEND_URL_DEFAULT}}
+    expose:
+      - "{{FRONTEND_PORT}}"       # only reachable within Docker network
+    depends_on:
+      backend:
+        condition: service_healthy  # wait for backend healthcheck to pass
+
+  # ---------------------------------------------------------------------------
+  # NGINX — reverse proxy, the ONLY publicly exposed service
+  # ---------------------------------------------------------------------------
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"                   # the single public entry point
+      # Uncomment the line below when adding SSL (nginx.ssl.conf)
+      # - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Uncomment the lines below when adding SSL
+      # - ./nginx/certs:/etc/nginx/certs:ro            # self-signed certs (local testing)
+      # - certbot_certs:/etc/letsencrypt:ro             # Let's Encrypt certs (production)
+      # - certbot_www:/var/www/certbot:ro               # Certbot challenge files
+    depends_on:
+      - frontend
+      - backend
+
+# =============================================================================
+# OPTIONAL: Uncomment the volumes block when using SSL with Let's Encrypt
+# =============================================================================
+# volumes:
+#   certbot_certs:
+#   certbot_www:
