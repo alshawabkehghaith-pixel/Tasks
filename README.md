@@ -1,7 +1,7 @@
 # Containerisation & Deployment Template
 **Internal Engineering Reference — Consulting Agency**
 
-A production-ready template for containerising web applications with a Python backend, Node.js frontend, and Nginx reverse proxy. Covers local development validation, full containerisation, SSL certificate setup, and VM deployment.
+Production-ready template for containerising a Python backend + Node.js frontend behind an Nginx reverse proxy with SSL.
 
 ---
 
@@ -11,15 +11,15 @@ A production-ready template for containerising web applications with a Python ba
 2. [Template Structure](#template-structure)
 3. [Customisation](#customisation)
 4. [Required Application Changes](#required-application-changes)
-5. [Phase 1 — Validate Nginx Locally](#phase-1--validate-nginx-locally)
-6. [Phase 2 — Containerise and Test](#phase-2--containerise-and-test)
-7. [Phase 3 — SSL Certificate](#phase-3--ssl-certificate)
-8. [Phase 4 — VM Deployment](#phase-4--vm-deployment)
-9. [Phase 5 — Connect Domain and SSL to Nginx](#phase-5--connect-domain-and-ssl-to-nginx)
-10. [Verification Checklist](#verification-checklist)
-11. [Debugging](#debugging)
-12. [Extensions](#extensions)
-13. [Production Checklist](#production-checklist)
+5. [Phase 1 — Containerise and Test](#phase-1--containerise-and-test)
+6. [Phase 2 — SSL Certificate](#phase-2--ssl-certificate)
+7. [Phase 3 — VM Deployment](#phase-3--vm-deployment)
+8. [Phase 4 — Connect Domain and SSL](#phase-4--connect-domain-and-ssl)
+9. [Verification Checklist](#verification-checklist)
+10. [Debugging](#debugging)
+11. [Extensions](#extensions)
+12. [Production Checklist](#production-checklist)
+13. [Quick Reference](#quick-reference)
 
 ---
 
@@ -27,12 +27,12 @@ A production-ready template for containerising web applications with a Python ba
 
 ```
 Internet
-  └─► Nginx :80 / :443         (sole public entry point)
+  └─► Nginx :80 / :443
         ├─ {{API_PREFIX}}/*  ──► Backend  :{{BACKEND_PORT}}
         └─ /*               ──► Frontend :{{FRONTEND_PORT}}
 ```
 
-The backend and frontend containers are never exposed to the host or internet. All ingress flows through Nginx, which terminates SSL, enforces routing, and proxies to upstream services over the internal Docker network.
+Nginx is the sole public entry point. The backend and frontend are on the internal Docker network only — never reachable directly from outside.
 
 ---
 
@@ -40,28 +40,26 @@ The backend and frontend containers are never exposed to the host or internet. A
 
 ```
 docker-deploy-template/
-├── README.md                       this document
+├── README.md
 ├── backend/
 │   ├── Dockerfile                  Python backend image
-│   └── .dockerignore
+│   ├── .dockerignore
+│   └── .env.example                Secrets reference — commit this
+│       .env                        Secrets — never commit
 ├── frontend/
-│   ├── Dockerfile                  Node.js frontend image (multi-stage)
+│   ├── Dockerfile                  Node.js multi-stage image
 │   └── .dockerignore
 ├── nginx/
-│   ├── nginx.conf                  Production — HTTP only
-│   ├── nginx.ssl.conf              Production — HTTPS with SSL termination
-│   ├── nginx.local-test.conf       Phase 1 validation only
-│   └── certs/                      Certificate files (never committed)
-├── docker-compose.yml
-└── backend/.env.example            Secrets reference (committed)
-    backend/.env                    Secrets (never committed)
+│   ├── nginx.ssl.conf              HTTPS with SSL termination
+│   └── certs/                      Certificate files — never commit
+└── docker-compose.yml
 ```
 
 ---
 
 ## Customisation
 
-Every placeholder follows the format `{{PLACEHOLDER}}`. Use a global find-and-replace across the folder before proceeding.
+Replace every `{{PLACEHOLDER}}` before use. In VS Code / Cursor: `Ctrl+Shift+H` → search the placeholder → Replace All.
 
 | Placeholder | Description | Example |
 |---|---|---|
@@ -70,26 +68,22 @@ Every placeholder follows the format `{{PLACEHOLDER}}`. Use a global find-and-re
 | `{{BACKEND_PORT}}` | Port the backend server binds to | `8081` |
 | `{{FRONTEND_PORT}}` | Port the frontend server binds to | `3000` |
 | `{{API_PREFIX}}` | URL path prefix for all API routes | `/api` |
-| `{{BACKEND_START_CMD}}` | Command to start the backend process | `python -m app.server` |
-| `{{BACKEND_INTERNAL_URL}}` | Backend URL visible to the Next.js Node process | `http://backend:8081` |
-| `{{BACKEND_HEALTHCHECK_URL}}` | Full URL used for the Compose healthcheck | `http://localhost:8081/api/healthz` |
-| `{{DOMAIN}}` | Public domain name (SSL phases only) | `app.example.com` |
-
-**How to replace — VS Code / Cursor global find-and-replace:**
-`Ctrl+Shift+H` → search `{{PLACEHOLDER}}` → replace with the actual value → Replace All.
+| `{{BACKEND_START_CMD}}` | Command to start the backend | `python -m app.server` |
+| `{{BACKEND_INTERNAL_URL}}` | Backend URL used by the Next.js Node process | `http://backend:8081` |
+| `{{BACKEND_HEALTHCHECK_URL}}` | Full URL for the Compose healthcheck | `http://localhost:8081/api/healthz` |
+| `{{DOMAIN}}` | Public domain name | `app.example.com` |
 
 ---
 
 ## Required Application Changes
 
-Two code-level changes must be made to the application before containerising. These are required regardless of framework.
+Make these changes to the application source before building images.
 
-### 1. Frontend — Make the backend URL configurable
+### 1. Frontend — configurable backend URL
 
-Development proxies (e.g. Next.js rewrites) typically hardcode `localhost:PORT` as the backend destination. Inside a Docker container the backend is on a separate network and is not reachable via `localhost`.
+Next.js rewrites typically hardcode `localhost` as the backend destination. Inside Docker, services communicate by service name, not `localhost`.
 
-**Next.js (`next.config.ts`):**
-
+**`next.config.ts`:**
 ```typescript
 // Before
 destination: 'http://localhost:8081/api/:path*'
@@ -99,168 +93,79 @@ const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:8081';
 destination: `${backendUrl}/api/:path*`
 ```
 
-In `docker-compose.yml`, `BACKEND_URL` is set to `http://backend:{{BACKEND_PORT}}` so the Next.js server reaches the backend by its Docker service name. Local development is unaffected — when `BACKEND_URL` is unset, it falls back to `localhost`.
+`BACKEND_URL` is set to `{{BACKEND_INTERNAL_URL}}` in `docker-compose.yml`. Local dev is unaffected — without the env var it falls back to `localhost`.
 
-For Vite / CRA applications where all API calls are browser-side fetches using relative paths (`/api/...`), this change is not required. The browser sends relative requests to the Nginx host, which routes them to the backend directly.
+> Vite / CRA apps that use browser-side relative paths (`/api/...`) do not need this change.
 
-### 2. Backend — Update CORS allowed origins
+### 2. Backend — CORS allowed origins
 
-The backend's CORS policy must permit the Nginx origin. When the application runs behind Nginx on port 80, the browser's `Origin` header is `http://localhost`, not `http://localhost:{{FRONTEND_PORT}}`.
+Behind Nginx on port 80, the browser sends `Origin: http://localhost` — not `http://localhost:{{FRONTEND_PORT}}`.
 
 ```python
-# FastAPI example — update to match your framework
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:{{FRONTEND_PORT}}",  # local dev
-    "http://localhost",                    # containerised (Nginx :80)
+    "http://localhost",                    # containerised via Nginx
     "http://localhost:80",
-    # "https://{{DOMAIN}}",               # add when deploying to production
+    # "https://{{DOMAIN}}",               # add in Phase 4
 ]
 ```
 
-### 3. Backend — Disable reload mode
+### 3. Backend — disable reload mode
 
-Hot-reload (e.g. `reload=true` in uvicorn) watches the filesystem for changes. Inside a container the filesystem is static, making reload mode unnecessary and potentially unstable.
-
-Set reload to `false` in the backend's configuration file before building the image.
+Hot-reload (e.g. `reload=true` in uvicorn) is unnecessary and potentially unstable inside a container. Set it to `false` before building.
 
 ---
 
-## Phase 1 — Validate Nginx Locally
-
-**Purpose:** Confirm the Nginx routing configuration is correct before building any Docker images. A misconfiguration caught here takes seconds to fix; the same mistake caught after a full `docker compose build` costs several minutes.
-
-**How it works:** The backend and frontend run natively on the host. A standalone Nginx container is started with `nginx/nginx.local-test.conf`, which routes to `host.docker.internal` — the DNS name Docker Desktop assigns to the host machine. The container has no knowledge of your application images; it only proxies HTTP traffic.
-
-> **Linux without Docker Desktop:** `host.docker.internal` is not set up automatically. Append `--add-host=host.docker.internal:host-gateway` to the `docker run` command in step 2.
-
-### Steps
-
-**1. Start native dev servers**
-
-```bash
-# Backend
-cd <backend-directory>
-<start command>            # e.g. python -m app.server
-
-# Frontend — separate terminal
-cd <frontend-directory>
-npm run dev
-```
-
-Confirm both are accessible before continuing:
-```bash
-curl http://localhost:{{BACKEND_PORT}}{{API_PREFIX}}/healthz
-# Open http://localhost:{{FRONTEND_PORT}} in a browser
-```
-
-**2. Run the Nginx validation container**
-
-The container mounts `nginx.local-test.conf` as its active config. It does not use any other file from this template.
-
-```powershell
-# Windows PowerShell
-docker run --rm -p 80:80 `
-  -v "${PWD}/nginx/nginx.local-test.conf:/etc/nginx/nginx.conf:ro" `
-  nginx:alpine
-```
-
-```bash
-# Mac / Linux
-docker run --rm -p 80:80 \
-  -v "$(pwd)/nginx/nginx.local-test.conf:/etc/nginx/nginx.conf:ro" \
-  nginx:alpine
-```
-
-The container occupies port 80. Leave it running for the verification step.
-
-**3. Verify routing**
-
-In a new terminal:
-
-```bash
-curl http://localhost{{API_PREFIX}}/healthz   # expect JSON from the backend
-curl http://localhost/                        # expect HTML from the frontend
-```
-
-Open `http://localhost` in a browser. The application should behave identically to accessing it on its native port, except all traffic now flows through Nginx on port 80.
-
-**4. Stop the container**
-
-`Ctrl+C` in the terminal running the container. Phase 1 is complete. Proceed to Phase 2 only if both routes responded correctly.
-
----
-
-## Phase 2 — Containerise and Test
-
-### Steps
+## Phase 1 — Containerise and Test
 
 **1. Create the secrets file**
 
 ```bash
 cp backend/.env.example backend/.env
+# Populate with real credentials
 ```
 
-Populate `backend/.env` with real credentials. This file must never be committed.
-
-**2. Build all images**
+**2. Build and start**
 
 ```bash
 docker compose build
-```
-
-See [Debugging](#debugging) for common build failures.
-
-**3. Start the stack**
-
-```bash
 docker compose up -d
 ```
 
-Startup order is enforced by `depends_on`: the backend must pass its healthcheck before the frontend starts; the frontend must be running before Nginx starts.
+Startup order is enforced: backend healthcheck passes → frontend starts → nginx starts.
 
-**4. Verify**
+**3. Verify**
 
 ```bash
-# All services running; only nginx shows published ports
-docker compose ps
-
-# API responds through Nginx
-curl http://localhost{{API_PREFIX}}/healthz
-
-# Backend is NOT directly accessible (must refuse connection)
-curl http://localhost:{{BACKEND_PORT}}/
-
-# Frontend is NOT directly accessible (must refuse connection)
-curl http://localhost:{{FRONTEND_PORT}}/
+docker compose ps                           # only nginx shows published ports
+curl http://localhost{{API_PREFIX}}/healthz # expect JSON
+curl http://localhost:{{BACKEND_PORT}}/     # must refuse connection
+curl http://localhost:{{FRONTEND_PORT}}/    # must refuse connection
 ```
 
 Open `http://localhost` and exercise the application end-to-end.
 
-**5. Common operations**
+**Common operations**
 
 ```bash
-docker compose logs -f                          # stream all logs
-docker compose logs backend                     # single service logs
-docker compose restart backend                  # restart after a config change
-docker compose down                             # stop and remove containers
-docker compose down --rmi all                   # full reset including images
-docker compose exec backend sh                  # shell into a running container
+docker compose logs -f
+docker compose logs <service>
+docker compose restart <service>
+docker compose down
+docker compose down --rmi all              # full reset including images
+docker compose exec <service> sh
 ```
 
 ---
 
-## Phase 3 — SSL Certificate
+## Phase 2 — SSL Certificate
 
-SSL is required for production. Two approaches are supported: purchasing a certificate from a CA (e.g. Namecheap/Sectigo) and using Let's Encrypt via Certbot.
-
-### Option A — Purchased Certificate (Namecheap / any CA)
+### Option A — Purchased certificate (Namecheap / any CA)
 
 **1. Generate a private key and CSR**
 
-Run from the project root. Requires Docker.
-
 ```powershell
-# Windows PowerShell
+# Windows
 docker run --rm -v "${PWD}/nginx/certs:/certs" alpine/openssl req -new `
   -newkey rsa:2048 -nodes `
   -keyout /certs/your_domain.key `
@@ -277,28 +182,23 @@ docker run --rm -v "$(pwd)/nginx/certs:/certs" alpine/openssl req -new \
   -subj "/CN={{DOMAIN}}/O=YourOrganisation/C=US"
 ```
 
-`your_domain.key` is the private key — it must never leave the machine or be committed. `your_domain.csr` is submitted to the CA.
+Keep `your_domain.key` secure — it must never leave the machine or be committed. Submit the contents of `your_domain.csr` to the CA.
 
-**2. Submit the CSR to your CA**
+**2. Submit CSR to the CA**
 
-- Log into the CA portal (e.g. Namecheap → SSL Certificates → Activate)
-- Select **Server-Side Automation / Manual CSR**
-- Server software: **Nginx**
+- CA portal → SSL Certificates → Activate
+- Server-Side Automation / Manual CSR → Server software: **Nginx**
 - Paste the contents of `your_domain.csr`
 
-**3. Complete domain validation**
+**3. Domain validation (CNAME method)**
 
-The CA must verify you control the domain. DNS (CNAME) validation is recommended:
+The CA provides a CNAME record (Host + Value). Add it in your DNS provider:
+- Enter only the subdomain part in the Host field — the provider appends the domain automatically
+- Validation takes 5–15 minutes; confirm propagation at [dnschecker.org](https://dnschecker.org) before clicking Verify
 
-- The CA provides a CNAME record (Host + Value)
-- Add it in your DNS provider's control panel
-- The Host value should be entered without the domain suffix — the DNS provider appends it automatically
-- Validation typically completes within 5–15 minutes
-- Use [dnschecker.org](https://dnschecker.org) to confirm the CNAME is resolvable before clicking Verify
+**4. Combine certificate files**
 
-**4. Download and combine certificate files**
-
-The CA emails a zip containing `your_domain.crt` and `your_domain.ca-bundle`. Extract both into `nginx/certs/`, then combine:
+The CA emails a zip with `your_domain.crt` and `your_domain.ca-bundle`. Extract both to `nginx/certs/`, then combine:
 
 ```powershell
 # Windows
@@ -312,23 +212,15 @@ cat nginx/certs/your_domain.crt nginx/certs/your_domain.ca-bundle \
   > nginx/certs/fullchain.crt
 ```
 
-Verify the combined file contains multiple `-----BEGIN CERTIFICATE-----` blocks — this confirms the chain is intact.
-
-`nginx/certs/` should now contain:
-```
-your_domain.key     private key
-fullchain.crt       certificate + intermediate chain
-```
-
-Add `nginx/certs/` to `.gitignore`.
+`nginx/certs/` should now contain `your_domain.key` and `fullchain.crt`. Add this directory to `.gitignore`.
 
 ---
 
 ### Option B — Let's Encrypt (Certbot)
 
-Let's Encrypt requires the domain's DNS A record to point to a publicly reachable server before issuance.
+The domain's DNS A record must already point to the public VM before issuance.
 
-**1. Add Certbot to `docker-compose.yml`**
+**1. Add to `docker-compose.yml`**
 
 ```yaml
 certbot:
@@ -337,25 +229,18 @@ certbot:
     - certbot_certs:/etc/letsencrypt
     - certbot_www:/var/www/certbot
 
-nginx:
-  volumes:
-    - ./nginx/nginx.ssl.conf:/etc/nginx/nginx.conf:ro
-    - certbot_certs:/etc/letsencrypt:ro
-    - certbot_www:/var/www/certbot:ro
-  ports:
-    - "80:80"
-    - "443:443"
+# Add to nginx service volumes:
+#   - certbot_certs:/etc/letsencrypt:ro
+#   - certbot_www:/var/www/certbot:ro
 
 volumes:
   certbot_certs:
   certbot_www:
 ```
 
-**2. First-time issuance (two-stage)**
+**2. First-time issuance**
 
-Nginx cannot start with the SSL config until certificate files exist. Start with a temporary HTTP-only config, issue the certificate, then switch.
-
-*Stage 1 — start Nginx on HTTP only:*
+Nginx cannot start with the SSL config until certificates exist. Bootstrap with a temporary HTTP config.
 
 Create `nginx/nginx.certbot-init.conf`:
 ```nginx
@@ -369,9 +254,10 @@ http {
   }
 }
 ```
-Point `docker-compose.yml` nginx volumes to this file temporarily and run: `docker compose up -d nginx`
 
-*Stage 2 — issue the certificate:*
+Point the nginx volume to this file and start: `docker compose up -d nginx`
+
+Issue the certificate:
 ```bash
 docker compose run --rm certbot certonly \
   --webroot --webroot-path=/var/www/certbot \
@@ -379,15 +265,9 @@ docker compose run --rm certbot certonly \
   -d {{DOMAIN}}
 ```
 
-*Stage 3 — switch to the SSL config and restart:*
-```bash
-# Restore nginx.ssl.conf in docker-compose.yml volumes, then:
-docker compose restart nginx
-```
+Restore `nginx.ssl.conf` in the volumes and restart: `docker compose restart nginx`
 
-**3. Certificate renewal**
-
-Let's Encrypt certificates expire after 90 days. Automate renewal with a monthly cron job on the server:
+**3. Renewal**
 
 ```bash
 # crontab -e
@@ -397,30 +277,23 @@ Let's Encrypt certificates expire after 90 days. Automate renewal with a monthly
 
 ---
 
-## Phase 4 — VM Deployment
+## Phase 3 — VM Deployment
 
-Any Linux VM with a public IP, SSH access, and Docker installed is sufficient. Common providers: AWS EC2, GCP Compute Engine, DigitalOcean Droplets, Azure VMs, Oracle Cloud.
+**Requirements:** Any Linux VM (Ubuntu 22.04 LTS recommended) with a public IP and SSH access. Minimum 1 vCPU / 1 GB RAM. Common providers: AWS EC2, GCP Compute Engine, DigitalOcean, Azure, Oracle Cloud.
 
-**Recommended:** Ubuntu 22.04 LTS, minimum 1 vCPU / 1 GB RAM.
-
-### VM Setup
-
-**1. Install Docker**
+### 1. Install Docker
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 curl -fsSL https://get.docker.com | sudo sh
-sudo usermod -aG docker $USER
-newgrp docker
-docker --version
+sudo usermod -aG docker $USER && newgrp docker
 ```
 
-**2. Open firewall ports**
+### 2. Open firewall ports
 
-This must be done at two levels:
+Two levels must be configured.
 
-*Cloud provider firewall / security group:*
-Add inbound rules allowing TCP port 80 and TCP port 443 from `0.0.0.0/0` (all sources). The exact UI varies by provider:
+**Cloud provider — inbound rules (TCP 80 and 443 from `0.0.0.0/0`):**
 
 | Provider | Location |
 |---|---|
@@ -430,7 +303,7 @@ Add inbound rules allowing TCP port 80 and TCP port 443 from `0.0.0.0/0` (all so
 | Azure | Networking → Add Inbound Port Rule |
 | Oracle Cloud | VCN → Security List → Add Ingress Rules |
 
-*OS-level firewall (Ubuntu):*
+**OS-level (Ubuntu):**
 ```bash
 sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT
@@ -438,126 +311,94 @@ sudo apt install -y iptables-persistent
 sudo netfilter-persistent save
 ```
 
-### Deploying the Application
+### 3. Deploy
 
-**Option A — Transfer project files directly**
+**Option A — Transfer files directly** (simple projects)
 
 ```bash
-# From your local machine
+# Local machine
 scp -r /path/to/project user@<vm-ip>:~/app
+
+# VM
+cd ~/app && docker compose up -d
 ```
 
-Then on the VM:
+**Option B — Docker Hub + transfer config only** (recommended for large images)
+
+Building on a low-resource VM is slow. Build locally, push to Docker Hub, pull on the VM.
+
 ```bash
-cd ~/app
-docker compose up -d
-```
-
-**Option B — Push images to Docker Hub, transfer only config files (recommended for large applications)**
-
-Building images on a low-resource VM is slow and may run out of memory. Build locally, push to a registry, and pull on the VM.
-
-*On your local machine:*
-```bash
+# Local — build and push
 docker login
-
-docker tag <local-backend-image> <dockerhub-username>/<app>-backend:latest
-docker tag <local-frontend-image> <dockerhub-username>/<app>-frontend:latest
-
-docker push <dockerhub-username>/<app>-backend:latest
-docker push <dockerhub-username>/<app>-frontend:latest
+docker tag <backend-image> <hub-username>/<app>-backend:latest
+docker tag <frontend-image> <hub-username>/<app>-frontend:latest
+docker push <hub-username>/<app>-backend:latest
+docker push <hub-username>/<app>-frontend:latest
 ```
 
-*Update `docker-compose.yml` on the VM* — replace the `build:` blocks with `image:` references:
+Update `docker-compose.yml` — replace `build:` blocks with `image:` references:
 ```yaml
 backend:
-  image: <dockerhub-username>/<app>-backend:latest
+  image: <hub-username>/<app>-backend:latest
 
 frontend:
-  image: <dockerhub-username>/<app>-frontend:latest
+  image: <hub-username>/<app>-frontend:latest
 ```
 
-*On the VM:*
-```bash
-docker compose pull
-docker compose up -d
+Transfer only the config files to the VM:
 ```
-
-Transfer only the config files (not source code):
-```
-nginx/           (including certs/)
+nginx/              (including certs/)
 docker-compose.yml
 backend/.env
 ```
 
+```bash
+# VM
+docker compose pull && docker compose up -d
+```
+
 **Updating after code changes:**
 ```bash
-# Local machine
+# Local
 docker compose build
-docker push <dockerhub-username>/<app>-backend:latest
-docker push <dockerhub-username>/<app>-frontend:latest
+docker push <hub-username>/<app>-backend:latest
+docker push <hub-username>/<app>-frontend:latest
 
 # VM
-docker compose pull
-docker compose up -d --force-recreate
+docker compose pull && docker compose up -d --force-recreate
 ```
 
 ---
 
-## Phase 5 — Connect Domain and SSL to Nginx
+## Phase 4 — Connect Domain and SSL
 
-### Prerequisites
-
-- SSL certificate files in `nginx/certs/` (`fullchain.crt` + `your_domain.key`)
-- Domain A record pointing to the VM's public IP
+**Prerequisites:**
+- `nginx/certs/` contains `fullchain.crt` and `your_domain.key`
+- DNS A record for `{{DOMAIN}}` points to the VM's public IP
 - Ports 80 and 443 open on the VM
 
-**Verify DNS before proceeding:**
+**Verify DNS:**
 ```bash
-nslookup {{DOMAIN}}
-# Must return the VM's public IP
+nslookup {{DOMAIN}}   # must return the VM's public IP
 ```
 
-### Update `nginx.ssl.conf`
-
-Replace all `{{DOMAIN}}` placeholders with the actual domain. Confirm the certificate paths match the filenames in `nginx/certs/`:
-
+**Update `nginx.ssl.conf`** — replace `{{DOMAIN}}` and confirm the cert paths match your filenames:
 ```nginx
 ssl_certificate     /etc/nginx/certs/fullchain.crt;
 ssl_certificate_key /etc/nginx/certs/your_domain.key;
 ```
 
-### Update `docker-compose.yml`
-
-Switch the nginx service to use the SSL config and expose port 443:
-
-```yaml
-nginx:
-  ports:
-    - "80:80"
-    - "443:443"
-  volumes:
-    - ./nginx/nginx.ssl.conf:/etc/nginx/nginx.conf:ro
-    - ./nginx/certs:/etc/nginx/certs:ro
-```
-
-### Update CORS
-
-Add the production domain to the backend's allowed origins:
-
+**Update CORS** — replace localhost entries with the production domain:
 ```python
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:{{FRONTEND_PORT}}",
-    "http://localhost",
     "https://{{DOMAIN}}",
 ]
 ```
 
-Rebuild and restart:
-
+**Rebuild and restart:**
 ```bash
 docker compose down
-docker compose build backend   # only if CORS change requires rebuild
+docker compose build backend
 docker compose up -d
 ```
 
@@ -565,145 +406,80 @@ docker compose up -d
 
 ## Verification Checklist
 
-Run after completing Phase 2, and again after Phase 5. All items must pass.
-
-### Phase 2 (HTTP)
+### After Phase 1
 
 ```bash
-# 1. All services running; only nginx has published ports
-docker compose ps
-
-# 2. API responds through Nginx
-curl http://localhost{{API_PREFIX}}/healthz
-# Expected: JSON from the backend
-
-# 3. Backend is not directly accessible
-curl http://localhost:{{BACKEND_PORT}}/
-# Expected: connection refused
-
-# 4. Frontend is not directly accessible
-curl http://localhost:{{FRONTEND_PORT}}/
-# Expected: connection refused
-
-# 5. Application works end-to-end in browser
-# Open http://localhost — exercise all major features
-
-# 6. Stack survives a restart
-docker compose down && docker compose up -d && docker compose ps
+docker compose ps                              # only nginx has published ports
+curl http://localhost{{API_PREFIX}}/healthz    # expect JSON
+curl http://localhost:{{BACKEND_PORT}}/        # must refuse connection
+curl http://localhost:{{FRONTEND_PORT}}/       # must refuse connection
+docker compose down && docker compose up -d    # stack restarts cleanly
 ```
 
-### Phase 5 (HTTPS + Domain)
+Open `http://localhost` and exercise the application end-to-end.
+
+### After Phase 4
 
 ```bash
-# 7. HTTP redirects to HTTPS
-curl -v http://{{DOMAIN}}/
-# Expected: 301 redirect to https://{{DOMAIN}}/
-
-# 8. HTTPS API call succeeds (no -k flag — certificate is trusted)
-curl https://{{DOMAIN}}{{API_PREFIX}}/healthz
-# Expected: JSON from the backend
-
-# 9. Certificate is valid and issued by the correct CA
-curl -v https://{{DOMAIN}}{{API_PREFIX}}/healthz
-# In output, look for: issuer: CN=<CA name>
-# e.g. "Sectigo RSA Domain Validation Secure Server CA" for Namecheap
-
-# 10. Browser — green padlock, no security warnings
-# Open https://{{DOMAIN}} — application must load fully
-
-# 11. Backend is still not directly accessible on the public domain
-curl https://{{DOMAIN}}:{{BACKEND_PORT}}/
-# Expected: connection refused
+curl -v http://{{DOMAIN}}/                             # expect 301 → https
+curl https://{{DOMAIN}}{{API_PREFIX}}/healthz          # expect JSON, no -k flag
+curl https://{{DOMAIN}}:{{BACKEND_PORT}}/              # must refuse connection
 ```
+
+Open `https://{{DOMAIN}}` in a browser — green padlock, no warnings.
 
 ---
 
 ## Debugging
 
-### Build failures
-
-**`pip install` — package not found**
-```
-ERROR: Could not find a version that satisfies the requirement <package>
-```
-A package name in `requirements.txt` is incorrect. Common mistakes: `dotenv` → `python-dotenv`, `sklearn` → `scikit-learn`, `PIL` → `Pillow`.
-
----
-
-**`npm ci` — missing lockfile**
-```
-npm error The `npm ci` command can only install with an existing package-lock.json
-```
-Run `npm install` locally in the frontend directory to generate `package-lock.json`, commit it, then rebuild.
-
----
-
-**Next.js build fails — TypeScript error**
-TypeScript errors surface during `npm run build` but not `npm run dev`. Run `npm run build` locally, resolve all errors, then rebuild the image.
-
----
-
-### Runtime failures
-
 **Backend shows `unhealthy`**
 
-Check logs first:
 ```bash
 docker compose logs backend
 ```
-If logs show the application running but the healthcheck fails, the healthcheck URL path is wrong. Verify `{{BACKEND_HEALTHCHECK_URL}}` matches an existing endpoint. If `curl: command not found` appears, the healthcheck is using curl in a slim image — use the Python-based healthcheck in `docker-compose.yml` instead.
+If the app is running but the healthcheck fails, the URL in `{{BACKEND_HEALTHCHECK_URL}}` does not match an existing endpoint. If `curl: command not found` appears, the healthcheck is invoking curl inside a slim image — use the Python-based healthcheck already defined in `docker-compose.yml`.
 
 ---
 
-**502 Bad Gateway from Nginx**
+**502 Bad Gateway**
 
-Nginx is running but cannot reach an upstream service.
+Nginx is running but cannot reach an upstream container.
 ```bash
-docker compose ps          # confirm upstream containers are running
+docker compose ps
 docker compose logs backend
 docker compose logs frontend
 ```
-Verify the port numbers in `nginx.conf` match the actual ports the services bind to.
+Verify the port numbers in `nginx.ssl.conf` match what the services actually bind to.
 
 ---
 
-**CORS error in browser console**
+**CORS error in browser**
 
-The backend rejected the request because the browser's `Origin` does not appear in `CORS_ALLOWED_ORIGINS`. Apply the change from [Required Application Changes](#required-application-changes) and restart the backend.
+The browser's `Origin` is not in the backend's `CORS_ALLOWED_ORIGINS`. Apply the change from [Required Application Changes](#required-application-changes) and restart the backend.
 
 ---
 
-**`nginx: [emerg]` in logs — SSL certificate error**
+**`nginx: [emerg]` — SSL error**
+
 ```bash
 docker compose logs nginx
 ```
 Common causes:
 - `fullchain.crt` or `your_domain.key` not present in `nginx/certs/` on the server
-- Private key does not match the certificate (regenerated after CSR submission) — the key file used must be from the same generation as the submitted CSR
-- `fullchain.crt` is missing the intermediate chain — re-combine `your_domain.crt` + `your_domain.ca-bundle`
+- Private key does not match the certificate — the `.key` must be from the same run that produced the `.csr`
+- `fullchain.crt` missing the intermediate chain — re-combine `your_domain.crt` + `your_domain.ca-bundle`
 
 ---
 
-**Domain does not resolve / times out**
+**Domain times out (DNS resolves correctly)**
 
-```bash
-nslookup {{DOMAIN}}
-```
-If the returned IP does not match the VM's public IP, the DNS A record is pointing elsewhere. Update it in the DNS provider and wait for propagation (check [dnschecker.org](https://dnschecker.org)).
-
-If DNS resolves correctly but the site times out, the VM's firewall is blocking inbound traffic. Verify both the cloud provider security group and the OS-level iptables rules (see [Phase 4](#phase-4--vm-deployment)).
-
----
-
-**`host.docker.internal` does not resolve (Linux)**
-
-On Linux without Docker Desktop, add `--add-host=host.docker.internal:host-gateway` to the Phase 1 `docker run` command, or add `extra_hosts: ["host.docker.internal:host-gateway"]` to the nginx service in `docker-compose.yml`.
+The VM firewall is blocking inbound traffic. Verify both the cloud provider security group and the OS-level iptables rules (see [Phase 3](#phase-3--vm-deployment)).
 
 ---
 
 ## Extensions
 
-Drop-in additions for common stack components. Add each service to `docker-compose.yml`.
+Drop-in service blocks for `docker-compose.yml`.
 
 ### PostgreSQL
 
@@ -815,7 +591,7 @@ airflow-webserver:
     retries: 5
 ```
 
-Add to `nginx.conf` before the catch-all `/` location:
+Add to `nginx.ssl.conf` before the catch-all `/` location:
 ```nginx
 location /airflow/ {
   proxy_pass http://airflow-webserver:8080/airflow/;
@@ -824,14 +600,14 @@ location /airflow/ {
 }
 ```
 
-Generate the Fernet key once and store it securely:
+Generate the Fernet key once and store it in `.env`:
 ```bash
 python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ```
 
 ---
 
-### LDAP (containerised, for development)
+### LDAP (containerised — development only)
 
 ```yaml
 ldap:
@@ -854,28 +630,26 @@ For an external corporate LDAP server, no container is needed — configure the 
 
 ## Production Checklist
 
-Before going live, verify all of the following.
-
 **Security**
-- [ ] `backend/.env` is not committed and not present in any Docker image
-- [ ] `nginx/certs/` is excluded from version control
-- [ ] Backend and frontend use `expose` (not `ports`) in `docker-compose.yml`
-- [ ] HTTPS is enabled with a valid, trusted certificate
-- [ ] HTTP redirects to HTTPS (port 80 block in `nginx.ssl.conf`)
-- [ ] `CORS_ALLOWED_ORIGINS` contains only the production domain — all `localhost` variants removed
-- [ ] Backend reload / debug mode is disabled
-- [ ] No default or placeholder passwords remain in any service configuration
+- [ ] `backend/.env` is not committed and not present in any image layer
+- [ ] `nginx/certs/` is in `.gitignore`
+- [ ] Backend and frontend use `expose`, not `ports`
+- [ ] HTTPS enabled with a valid, trusted certificate
+- [ ] HTTP redirects to HTTPS
+- [ ] `CORS_ALLOWED_ORIGINS` contains only the production domain
+- [ ] Backend reload / debug mode disabled
+- [ ] No placeholder passwords remain in any service
 
 **Reliability**
-- [ ] All services have a `healthcheck` defined
-- [ ] `depends_on` uses `condition: service_healthy` to enforce startup ordering
-- [ ] `proxy_read_timeout` is sufficient for the slowest expected operation
-- [ ] `client_max_body_size` accommodates the largest expected upload
+- [ ] All services have a `healthcheck`
+- [ ] `depends_on` uses `condition: service_healthy`
+- [ ] `proxy_read_timeout` covers the slowest expected operation
+- [ ] `client_max_body_size` covers the largest expected upload
 
 **Maintainability**
-- [ ] Certificate renewal is automated (Let's Encrypt cron job) or calendared (purchased certificate)
-- [ ] `docker compose down && docker compose up -d` starts the stack cleanly from any state
-- [ ] A new team member can clone the repo, populate `.env` from `.env.example`, and run `docker compose up` with no additional setup
+- [ ] Certificate renewal is automated or calendared
+- [ ] `docker compose down && docker compose up -d` works cleanly from any state
+- [ ] A new team member can onboard with only: clone repo → populate `.env` → `docker compose up`
 
 ---
 
@@ -886,15 +660,12 @@ Before going live, verify all of the following.
 | Build all images | `docker compose build` |
 | Start stack | `docker compose up -d` |
 | Stop stack | `docker compose down` |
-| View all containers | `docker compose ps` |
-| Stream logs | `docker compose logs -f` |
+| View containers | `docker compose ps` |
+| Stream all logs | `docker compose logs -f` |
 | Logs for one service | `docker compose logs <service>` |
 | Restart one service | `docker compose restart <service>` |
 | Rebuild + restart one service | `docker compose build <service> && docker compose up -d --force-recreate <service>` |
 | Shell into container | `docker compose exec <service> sh` |
-| Test Nginx config | `docker compose exec nginx nginx -t` |
+| Validate Nginx config | `docker compose exec nginx nginx -t` |
 | Full reset | `docker compose down --rmi all` |
-| Phase 1 validation (Windows) | `docker run --rm -p 80:80 -v "${PWD}/nginx/nginx.local-test.conf:/etc/nginx/nginx.conf:ro" nginx:alpine` |
-| Phase 1 validation (Mac/Linux) | `docker run --rm -p 80:80 -v "$(pwd)/nginx/nginx.local-test.conf:/etc/nginx/nginx.conf:ro" nginx:alpine` |
-| Generate self-signed cert | `docker run --rm -v "${PWD}/nginx/certs:/certs" alpine/openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /certs/domain.key -out /certs/fullchain.crt -subj "/CN={{DOMAIN}}"` |
 | Generate Fernet key | `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"` |
