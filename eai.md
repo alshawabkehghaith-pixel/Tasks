@@ -267,67 +267,50 @@ the system remains aligned with all applicable requirements.
 
 ---
 
-### Principle 9 — Human Oversight
+### Principle 9 — Human Oversight and Monitoring
 
 Human oversight ensures that consequential decisions informed by AI remain under 
-meaningful human control. AI systems provide analysis and recommendations — they 
-do not make decisions. Oversight mechanisms must be built into the system 
-architecture; they cannot be enforced through policy alone.
+meaningful human control — AI systems provide analysis and recommendations, they 
+do not make decisions. Monitoring is the mechanism by which oversight, along with 
+all other principles, is sustained after deployment. Together they form a continuous 
+control loop: oversight defines the human checkpoints built into the system, and 
+monitoring verifies they are working as intended in the live environment.
 
 **Gate 2 — AI Solution Design**
 Classify every planned AI output as Informational, Advisory, or Critical and define 
 the human review requirement for each class. Design Human-in-the-Loop gates as 
 blocking workflow logic for Advisory and Critical outputs, and define escalation 
-triggers for outputs that exceed the reviewer's authority to act on independently.
+triggers for outputs that exceed a reviewer's authority to act on independently. 
+In parallel, define the full monitoring architecture: what will be monitored — 
+fairness metrics, model drift, access anomalies, HITL completion rates — at what 
+frequency, and by whom. Set metric thresholds and alert conditions, and specify the 
+monthly, quarterly, and annual review schedule as operational obligations from the outset.
 
 **Gate 3 — AI Solution Development**
 Build HITL gates as blocking functional logic — the system must be architecturally 
 incapable of proceeding past a required review step without a recorded human approval. 
 Implement the override log with mandatory reason capture and confirm it is accessible 
-to the governance body and auditors.
+to the governance body and auditors. Build monitoring dashboards and automated alert 
+pipelines alongside the AI system. Test each alert type to confirm it reaches the 
+correct recipient within the required timeframe. Monitoring must be producing data 
+before pre-deployment testing begins.
 
 **Gate 4 — Pre-Deployment Review and Approval**
 Test all HITL gates with realistic decision scenarios in UAT — confirm they are 
 genuinely blocking and that all required log fields are captured. Confirm reviewer 
-capacity is in place before go-live is approved. Verify that escalation paths are 
-documented and notification mechanisms are functioning.
+capacity is in place before go-live is approved and that escalation paths and 
+notification mechanisms are functioning. Confirm all monitoring dashboards are active 
+in the production environment. Run test alerts for all alert types and record the 
+monitoring baseline — current fairness metrics, performance benchmarks, and access 
+patterns — against which all future reviews will be compared.
 
 **Gate 5 — Go-Live and Monitoring**
-Monitor HITL gate completion rates monthly — a decline in review activity may 
-indicate oversight is being bypassed. Review the override log monthly for patterns 
-indicating systematic model errors or user trust issues. Formally document any 
-capacity shortfall as an exception with a remediation date.
-
----
-
-### Principle 10 — Monitoring
-
-Monitoring is the mechanism by which all other principles are sustained after 
-deployment. An AI system that was sound at go-live can drift — in performance, 
-fairness, or compliance. Monitoring is not a passive dashboard; it is an active, 
-scheduled obligation that surfaces problems before they cause harm.
-
-**Gate 2 — AI Solution Design**
-Define the full monitoring architecture as part of the system's functional scope: 
-what will be monitored, at what frequency, and by whom. Set metric thresholds and 
-alert conditions. Specify the monthly, quarterly, and annual review schedule and 
-assign them as operational obligations from the outset.
-
-**Gate 3 — AI Solution Development**
-Build monitoring dashboards and automated alert pipelines alongside the AI system — 
-not after it. Test each alert type to confirm it reaches the correct recipient within 
-the required timeframe. Monitoring must be producing data before pre-deployment 
-testing begins.
-
-**Gate 4 — Pre-Deployment Review and Approval**
-Confirm all monitoring is active in the production environment before go-live is 
-approved. Run test alerts for all alert types. Record the monitoring baseline — 
-current fairness metrics, performance benchmarks, and access patterns — against 
-which all future monitoring will be compared.
-
-**Gate 5 — Go-Live and Monitoring**
-Issue a monthly Ethics Health Report covering fairness, model drift, access anomalies, 
-override patterns, and any incidents. Conduct a quarterly review and an annual ethical 
-impact review producing a formal compliance statement. Re-enter the governance cycle 
-immediately for any significant trigger event — a data change, an adversarial incident, 
-a regulatory change, or a material shift in how the system is being used.
+Monitor HITL gate completion rates monthly — a decline in review activity may indicate 
+oversight is being bypassed and must be investigated. Review the override log monthly 
+for patterns indicating systematic model errors or user trust issues. Formally document 
+any reviewer capacity shortfall as an exception with a remediation date. Issue a monthly 
+Ethics Health Report covering fairness, model drift, access anomalies, override patterns, 
+and any incidents. Conduct a quarterly review and an annual ethical impact review 
+producing a formal compliance statement. Re-enter the governance cycle immediately for 
+any significant trigger event — a data change, an adversarial incident, a regulatory 
+change, or a material shift in how the system is being used.
