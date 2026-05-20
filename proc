@@ -1,0 +1,113 @@
+## Ethical AI Process Gates
+
+---
+
+### Gate 2 — AI Solution Design
+**Purpose:** Embed ethical and governance requirements into the solution design
+before any development begins.
+
+**Process**
+- Complete the AI Risk Classification Sheet to determine the system's risk level
+  based on model type, data sensitivity, and decision impact
+- Conduct the Ethical Impact Assessment: identify affected stakeholders, potential
+  harms, accountability roles, and system purpose and limitations
+- Assess data readiness and define data governance requirements: classification,
+  lawful basis, PII handling, and lineage tracking
+- Design ethical controls into the solution architecture: access controls,
+  explainability approach, HITL gates for Advisory and Critical outputs,
+  and monitoring architecture
+- Map applicable compliance obligations to design decisions and flag any
+  with long lead times
+- Review all outputs with the AI Ethics governance body and issue a
+  Go / No-Go Decision
+
+**Operational Artifacts**
+1. AI Risk Classification Sheet
+2. Ethical Impact Assessment
+3. Data Readiness and Data Governance Checklist
+4. Compliance Requirements Map
+5. Human Oversight Plan (Draft)
+6. Go / No-Go Decision Record
+
+---
+
+### Gate 3 — AI Solution Development
+**Purpose:** Build the solution with all ethical controls implemented and evidenced.
+Every Gate 2 requirement must have a corresponding implementation and test result.
+
+*Applies to developed and hybrid solutions. Off-the-shelf solutions proceed
+directly to Gate 5.*
+
+**Process**
+- Enforce model versioning and log all significant development decisions against
+  named owners
+- Implement data protection controls: PII masking, encryption, access controls,
+  and data lineage records
+- Run structured testing: smoke tests, regression tests, load tests where
+  applicable, and edge case tests
+- Conduct bias and fairness testing against the metrics defined at Gate 2;
+  apply and document mitigations where needed
+- Integrate the chosen explainability method and validate outputs with a
+  representative user
+- For LLM and RAG systems, conduct adversarial prompt testing during development
+- Build HITL blocking logic, override logging, and monitoring dashboards;
+  test all alerts end-to-end
+- Produce the draft Model Card
+
+**Operational Artifacts**
+1. Model Card (Draft)
+2. Bias and Fairness Audit Report
+3. Explainability Report
+4. Security and Adversarial Testing Report
+5. Data Readiness and Data Governance Checklist (Validated)
+6. Human Oversight Plan (Updated)
+
+---
+
+### Gate 4 — Pre-Deployment Review and Approval
+**Purpose:** Independently verify that the built system meets Gate 2 requirements
+and issue the formal deployment authorisation.
+
+*Applies to developed and hybrid solutions only.*
+
+**Process**
+- Review all Gate 3 artifacts against Gate 2 design requirements
+- Verify technical controls in the pre-production environment: encryption,
+  access controls, rollback procedure, and output filtering
+- Test HITL gates with realistic scenarios in UAT and confirm they are
+  genuinely blocking
+- Conduct a structured compliance review and obtain formal legal / regulatory
+  sign-off
+- Finalise and publish the Model Card
+- Issue a Go / No-Go deployment decision; if not approved, document required
+  remediation actions and resubmission timeline
+
+**Operational Artifacts**
+1. Pre-Deployment Ethics Checklist
+2. Model Card (Final)
+3. Human Oversight Plan (Confirmed)
+4. Compliance Sign-Off Record
+5. Go / No-Go Decision Record (Deployment)
+
+---
+
+### Gate 5 — AI Solution / Product Deployment (Go-Live)
+**Purpose:** Activate the system in production with all ethical controls live
+from day one and hand over to Gate 6 in a documented, ready state.
+
+**Process**
+- Deploy the Gate 4 approved configuration and confirm all ethical controls
+  are active: encryption, access controls, HITL gates, override logging,
+  and inference logging
+- Confirm named owners are active and incident ownership is documented
+- Confirm user-facing disclosures are live at the point of interaction
+- Record the monitoring baseline: fairness metrics, performance benchmarks,
+  and access patterns at go-live
+- Assign the Gate 6 monitoring schedule to named owners and hand over the
+  complete artifact set
+
+**Operational Artifacts**
+1. Go-Live Deployment Record
+2. Monitoring Baseline Record
+3. User Disclosure Confirmation
+4. Gate 6 Handover Pack
